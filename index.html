@@ -3,17 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="pageTitle">Client Portal</title>
-    
+    <title id="pageTitle">Gas Baee - Client Portal</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <meta name="theme-color" content="#2B3EBF">
+
     <script>
+        // Palet Gas Baee: slate = krem -> biru malam, blue = oranye logo
         tailwind = {
             config: {
-                darkMode: 'class', 
+                darkMode: 'class',
+                theme: {
+                    extend: {
+                        colors: {
+                            slate: {
+                                50: '#FDF6E7', 100: '#FAEBD0', 200: '#EFD8B0', 300: '#D9BF93',
+                                400: '#9C93B8', 500: '#6D6797', 600: '#4A4A8F', 700: '#2E3490',
+                                800: '#1F2670', 900: '#151A52', 950: '#0D1038'
+                            },
+                            blue: {
+                                50: '#FFF6E5', 100: '#FFE8BF', 200: '#FFD48A', 300: '#FFBE55',
+                                400: '#F8AE35', 500: '#F4A027', 600: '#E5890F', 700: '#C97409',
+                                800: '#9A5806', 900: '#6B3D05'
+                            }
+                        },
+                        fontFamily: {
+                            display: ['"Lilita One"', 'system-ui', 'sans-serif']
+                        }
+                    }
+                }
             }
         }
     </script>
     <script src="https://cdn.tailwindcss.com"></script>
-    
+
     <script>
         if (localStorage.getItem('theme') === 'dark') {
             document.documentElement.classList.add('dark');
@@ -25,19 +47,69 @@
 
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; overflow-x: hidden; transition: background-color 0.3s ease, color 0.3s ease; }
-        ::-webkit-scrollbar { width: 8px; }
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+        :root {
+            --gb-orange: #F4A027;
+            --gb-orange-deep: #D27B10;
+            --gb-blue: #2B3EBF;
+            --gb-ink: #151A52;
+            --gb-cream: #FDF5E6;
+        }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            background-image: radial-gradient(rgba(43, 62, 191, 0.10) 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+        .dark body { background-image: radial-gradient(rgba(244, 160, 39, 0.10) 1.5px, transparent 1.5px); }
+
+        h1, h2, h3, .font-display { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; letter-spacing: 0.01em; }
+
+        ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark ::-webkit-scrollbar-thumb { background: #475569; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-        
-        .photo-card { transition: all 0.2s ease-in-out; }
+        ::-webkit-scrollbar-thumb { background: var(--gb-blue); border-radius: 6px; border: 2px solid var(--gb-cream); }
+        .dark ::-webkit-scrollbar-thumb { background: var(--gb-orange); border-color: var(--gb-ink); }
+
+        /* Header & footer: garis tebal oranye seperti blok huruf di logo */
+        header.gb-header { border-bottom: 4px solid var(--gb-orange) !important; box-shadow: 0 4px 0 0 var(--gb-blue); }
+        footer.gb-footer { border-top: 4px solid var(--gb-blue) !important; }
+        #actionBar { border-top: 4px solid var(--gb-orange) !important; }
+
+        /* Kartu bergaya blok 3D (bayangan keras seperti sisi biru pada logo) */
+        .gb-card {
+            border: 3px solid var(--gb-ink) !important;
+            box-shadow: 6px 6px 0 0 var(--gb-blue);
+        }
+        .dark .gb-card { border-color: var(--gb-orange) !important; box-shadow: 6px 6px 0 0 var(--gb-blue); }
+
+        .gb-hero {
+            background: var(--gb-blue);
+            border: 3px solid var(--gb-ink);
+            box-shadow: 8px 8px 0 0 var(--gb-orange);
+        }
+        .dark .gb-hero { border-color: var(--gb-cream); }
+
+        /* Tombol: menekan ke bawah saat diklik */
+        .gb-press { transition: transform .08s ease, box-shadow .08s ease; }
+        .gb-press:active { transform: translate(2px, 2px); box-shadow: 0 0 0 0 transparent !important; }
+        .gb-btn-primary {
+            background: var(--gb-orange); color: var(--gb-ink);
+            border: 3px solid var(--gb-ink); box-shadow: 4px 4px 0 0 var(--gb-blue);
+            font-family: 'Lilita One', sans-serif; letter-spacing: .02em;
+        }
+        .gb-btn-primary:hover { background: #FFB43F; }
+        .dark .gb-btn-primary { border-color: var(--gb-cream); }
+
+        .photo-card.photo-card { box-shadow: 3px 3px 0 0 var(--gb-blue); border: 2px solid var(--gb-ink); transition: all 0.2s ease-in-out; }
+        .dark .photo-card.photo-card { border-color: rgba(253, 245, 230, .35); }
+        .photo-card.photo-card.selected { box-shadow: 4px 4px 0 0 var(--gb-orange); border-color: var(--gb-orange); }
         .photo-card:active { transform: scale(0.97); }
         .selected-overlay { opacity: 0; transition: opacity 0.2s ease; }
         .photo-card.selected .selected-overlay { opacity: 1; }
-        
+
         @keyframes checkPop {
             0% { transform: scale(0) rotate(-15deg); opacity: 0; }
             50% { transform: scale(1.3) rotate(10deg); opacity: 1; }
@@ -45,8 +117,9 @@
         }
         .photo-card.selected .check-badge {
             animation: checkPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+            border: 2px solid var(--gb-ink);
         }
-        
+
         @keyframes breathing {
             0% { transform: scale(0.95); }
             50% { transform: scale(0.92); }
@@ -54,8 +127,8 @@
         }
         .photo-card.selected img {
             border-radius: 0.5rem;
-            animation: breathing 3s infinite ease-in-out; 
-            box-shadow: 0 0 0 3px #3b82f6; 
+            animation: breathing 3s infinite ease-in-out;
+            box-shadow: 0 0 0 3px var(--gb-orange);
         }
 
         /* Mode proteksi: cegah select & callout gambar */
@@ -75,7 +148,7 @@
             z-index: 9999;
         }
 
-        /* Triangle untuk tooltip */
+        /* Segitiga tooltip */
         .tooltip-triangle {
             position: absolute;
             bottom: -4px;
@@ -83,10 +156,23 @@
             transform: translateX(-50%) rotate(45deg);
             width: 10px;
             height: 10px;
-            background-color: #2563eb; /* blue-600 */
+            background-color: #E5890F;
         }
+
+        /* Satu momen animasi saat halaman dibuka: logo hero miring masuk */
+        @keyframes logoSlam {
+            0% { transform: translateY(-30px) rotate(-14deg) scale(.8); opacity: 0; }
+            60% { transform: translateY(4px) rotate(4deg) scale(1.04); opacity: 1; }
+            100% { transform: translateY(0) rotate(3deg) scale(1); opacity: 1; }
+        }
+        .logo-slam { animation: logoSlam .7s cubic-bezier(.2, .9, .3, 1.2) both; }
+        @media (prefers-reduced-motion: reduce) {
+            .logo-slam, .photo-card.selected img { animation: none; }
+        }
+
+        :focus-visible { outline: 3px solid var(--gb-orange); outline-offset: 2px; }
     </style>
-    
+
     <script src="pengaturan.js"></script>
 </head>
 <body class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 pb-32 flex flex-col min-h-screen">
@@ -94,26 +180,24 @@
     <!-- Blackout Overlay: muncul saat window kehilangan fokus (mis. Snipping Tool) -->
     <div id="protectionBlackout" class="hidden"></div>
 
-    <header class="bg-white dark:bg-slate-800 shadow-sm border-b border-slate-200 dark:border-slate-700 sticky top-0 z-40 transition-colors duration-300">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <header class="gb-header bg-white dark:bg-slate-800 sticky top-0 z-40 transition-colors duration-300">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
             <div class="flex items-center gap-3">
-                <div class="bg-slate-900 dark:bg-slate-700 text-white w-10 h-10 rounded-xl flex items-center justify-center text-xl shadow-lg">
-                    <i class="fa-solid fa-camera-retro"></i>
-                </div>
-                <div>
-                    <h1 class="font-bold text-lg leading-tight tracking-tight text-slate-800 dark:text-white" id="headerVendorName">Client Portal</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-medium uppercase tracking-wider" data-i18n="subtitle">Alat Seleksi Aman</p>
+                <img src="logo-gasbae.png" alt="Gas Baee" class="h-12 w-auto drop-shadow-md" draggable="false">
+                <div class="hidden sm:block">
+                    <h1 class="text-xl leading-tight text-slate-800 dark:text-white" id="headerVendorName">Gas Baee</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="subtitle">Creative Production Cirebon</p>
                 </div>
             </div>
-            
+
             <div class="flex items-center gap-2">
-                <button onclick="showTutorial(true)" class="flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm transition shadow-sm border border-slate-200 dark:border-slate-600" title="Panduan">
-                    <i class="fa-solid fa-circle-question text-blue-600 dark:text-blue-400"></i> <span class="hidden md:inline ml-1 font-bold" data-i18n="btnGuide">Panduan</span>
+                <button onclick="showTutorial(true)" class="gb-press flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500" title="Panduan">
+                    <i class="fa-solid fa-circle-question text-blue-600 dark:text-blue-400"></i> <span class="hidden md:inline ml-1 font-extrabold" data-i18n="btnGuide">Panduan</span>
                 </button>
-                <button onclick="toggleDarkMode()" id="darkModeBtn" class="flex items-center justify-center w-9 h-9 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-sm transition shadow-sm border border-slate-200 dark:border-slate-600">
+                <button onclick="toggleDarkMode()" id="darkModeBtn" class="gb-press flex items-center justify-center w-9 h-9 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
                     <i class="fa-solid fa-moon text-slate-600 dark:text-slate-300"></i>
                 </button>
-                <button onclick="toggleLanguage()" class="flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-bold rounded-lg text-sm transition shadow-sm border border-slate-200 dark:border-slate-600">
+                <button onclick="toggleLanguage()" class="gb-press flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-extrabold rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
                     <i class="fa-solid fa-globe text-blue-600 dark:text-blue-400"></i> <span id="langDisplay" class="hidden md:inline ml-1">EN</span>
                 </button>
             </div>
@@ -121,84 +205,83 @@
     </header>
 
     <main id="clientView" class="flex-grow w-full">
-        
+
         <div id="greetingSection" class="hidden max-w-6xl w-full mx-auto px-4 pt-8">
-            <div class="bg-slate-900 dark:bg-slate-800 rounded-3xl p-6 md:p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-slate-800 dark:border-slate-700">
-                <div class="absolute -right-10 -top-10 text-slate-800 dark:text-slate-700 opacity-50 transform rotate-12 pointer-events-none">
-                    <i class="fa-solid fa-camera-retro text-[150px]"></i>
+            <div class="gb-hero rounded-3xl p-6 md:p-8 text-white relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <img src="logo-gasbae-outline.png" alt="" aria-hidden="true" draggable="false"
+                     class="logo-slam absolute -right-6 -bottom-8 w-40 md:w-60 pointer-events-none select-none opacity-95">
+
+                <div class="relative z-10 max-w-xl">
+                    <h2 class="text-3xl md:text-5xl mb-2"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
+                    <p class="text-slate-100 text-sm md:text-base leading-relaxed font-semibold" data-i18n="welcomeDesc">Selamat datang di portal seleksi foto dari {vendor}.</p>
                 </div>
-                
-                <div class="relative z-10">
-                    <h2 class="text-2xl md:text-3xl font-bold mb-1"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
-                    <p class="text-slate-300 text-sm md:text-base leading-relaxed" data-i18n="welcomeDesc">Selamat datang di portal seleksi foto dari {vendor}.</p>
-                </div>
-                
-                <div id="greetingQuotaInfo" class="hidden relative z-10 bg-slate-800/80 dark:bg-slate-900/80 backdrop-blur-md border border-slate-700 px-5 py-3 rounded-2xl items-center gap-4 shadow-inner">
-                    <div class="w-12 h-12 rounded-xl bg-blue-900/50 flex items-center justify-center text-blue-400 text-lg">
+
+                <div id="greetingQuotaInfo" class="hidden relative z-10 bg-slate-900/70 border-2 border-blue-400 px-5 py-3 rounded-2xl items-center gap-4 mr-0 md:mr-40">
+                    <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-slate-900 text-lg">
                         <i class="fa-solid fa-images"></i>
                     </div>
                     <div>
-                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider" data-i18n="quotaTitle">Kuota Paket</p>
-                        <p class="text-sm font-bold"><span id="greetingQuotaLimit" class="text-xl text-white">0</span> <span class="text-slate-300" data-i18n="quotaMax">Foto Maksimal</span></p>
+                        <p class="text-xs text-blue-300 font-bold" data-i18n="quotaTitle">Kuota Paket</p>
+                        <p class="text-sm font-bold"><span id="greetingQuotaLimit" class="text-3xl font-display text-white">0</span> <span class="text-slate-200" data-i18n="quotaMax">Foto Maksimal</span></p>
                     </div>
                 </div>
             </div>
         </div>
 
         <div class="max-w-6xl mx-auto px-4 py-8 w-full">
-            <div id="inputSection" class="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-sm border border-slate-100 dark:border-slate-700 mb-8 max-w-2xl mx-auto text-center relative overflow-hidden hidden transition-colors duration-300">
-                <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-slate-200 via-slate-800 to-slate-200 dark:from-slate-700 dark:via-blue-500 dark:to-slate-700"></div>
-                <h2 class="text-xl font-bold mb-2 text-slate-800 dark:text-white" data-i18n="manualTitle">Akses Manual Galeri</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mb-8" data-i18n="manualDesc">Silakan tempel (paste) link folder Google Drive Anda di bawah ini.</p>
+            <div id="inputSection" class="gb-card bg-white dark:bg-slate-800 rounded-2xl p-8 mb-8 max-w-2xl mx-auto text-center relative overflow-hidden hidden transition-colors duration-300">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
+                <h2 class="text-2xl mb-2 text-slate-800 dark:text-white" data-i18n="manualTitle">Akses Manual Galeri</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mb-8 font-semibold" data-i18n="manualDesc">Silakan tempel (paste) link folder Google Drive Anda di bawah ini.</p>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="fa-brands fa-google-drive text-slate-400 text-lg"></i>
                     </div>
-                    <input type="text" id="driveLink" 
-                        class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 text-slate-800 dark:text-white rounded-xl focus:ring-2 focus:ring-slate-800 dark:focus:ring-blue-500 outline-none transition" 
+                    <input type="text" id="driveLink"
+                        class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-4 focus:ring-blue-500/50 outline-none transition font-semibold"
                         placeholder="Link Google Drive...">
                 </div>
                 <div class="mt-6 flex justify-center">
-                    <button onclick="loadFromDrive()" class="px-8 py-3.5 bg-slate-900 dark:bg-blue-600 hover:bg-black dark:hover:bg-blue-700 text-white font-medium rounded-xl transition shadow-lg flex items-center justify-center gap-2">
+                    <button onclick="loadFromDrive()" class="gb-btn-primary gb-press px-8 py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-lg">
                         <i class="fa-solid fa-folder-open"></i> <span data-i18n="btnOpen">Buka Galeri</span>
                     </button>
                 </div>
             </div>
 
             <div id="loadingState" class="hidden flex-col items-center justify-center py-16">
-                <i class="fa-solid fa-circle-notch fa-spin text-4xl text-slate-800 dark:text-blue-500 mb-4"></i>
-                <p id="loadingText" class="text-slate-500 dark:text-slate-400 font-medium mt-3" data-i18n="loading">Menarik data dari Google Drive...</p>
+                <i class="fa-solid fa-circle-notch fa-spin text-5xl text-blue-500 mb-4"></i>
+                <p id="loadingText" class="text-slate-500 dark:text-slate-400 font-bold mt-3" data-i18n="loading">Menarik data dari Google Drive...</p>
             </div>
 
             <div id="galleryContainer" class="hidden">
-                <div id="folderNavContainer" class="hidden mb-6 bg-white dark:bg-slate-800 rounded-2xl p-5 border border-slate-200 dark:border-slate-700 shadow-sm">
-                    <div class="flex items-center justify-between mb-4 border-b border-slate-100 dark:border-slate-700 pb-3">
+                <div id="folderNavContainer" class="gb-card hidden mb-6 bg-white dark:bg-slate-800 rounded-2xl p-5">
+                    <div class="flex items-center justify-between mb-4 border-b-2 border-slate-200 dark:border-slate-700 pb-3">
                         <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center">
-                            <i class="fa-solid fa-folder-tree mr-2 text-blue-500"></i> 
+                            <i class="fa-solid fa-folder-tree mr-2 text-blue-500"></i>
                             <span data-i18n="folderTitle">Sub-Folder Tersedia</span>
                         </h4>
-                        <button id="btnBackFolder" onclick="navigateBackFolder()" class="hidden text-xs font-bold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg shadow-sm border border-slate-200 dark:border-slate-600 hover:bg-blue-50 hover:text-blue-600 transition flex items-center">
+                        <button id="btnBackFolder" onclick="navigateBackFolder()" class="gb-press hidden text-xs font-extrabold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border-2 border-slate-800 dark:border-slate-500 hover:bg-blue-100 hover:text-blue-700 transition flex items-center">
                             <i class="fa-solid fa-arrow-left mr-1.5"></i> <span data-i18n="btnBackFolder">Kembali</span>
                         </button>
                     </div>
                     <div id="folderGrid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3"></div>
                 </div>
 
-                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4 border-b border-slate-200 dark:border-slate-700 pb-4">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4 border-b-4 border-slate-800 dark:border-blue-500 pb-4">
                     <div>
-                        <h3 class="font-bold text-xl text-slate-800 dark:text-white flex items-center gap-2">
+                        <h3 class="text-3xl text-slate-800 dark:text-white flex items-center gap-2">
                             <span id="currentFolderDisplay" data-i18n="galleryTitle">Koleksi Foto</span>
                         </h3>
-                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1" data-i18n="galleryDesc">Klik gambar untuk memilih. Klik ikon 🔍 untuk perbesar & tambah catatan.</p>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-semibold" data-i18n="galleryDesc">Klik gambar untuk memilih. Klik ikon 🔍 untuk perbesar & tambah catatan.</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        
+
                         <!-- TOMBOL GRID DENGAN ANIMASI BALON TOOLTIP -->
                         <div class="relative">
-                            <button onclick="hideTooltip('gridTooltip'); toggleGridSize()" class="text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-medium cursor-pointer shadow-sm hover:bg-slate-50 dark:hover:bg-slate-700 transition" title="Ubah Ukuran Grid">
+                            <button onclick="hideTooltip('gridTooltip'); toggleGridSize()" class="gb-press text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-bold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Ubah Ukuran Grid">
                                 <i class="fa-solid fa-table-cells-large"></i>
                             </button>
-                            <div id="gridTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
+                            <div id="gridTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-extrabold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
                                 <span data-i18n="gridTip">Ubah Baris Foto</span>
                                 <div class="tooltip-triangle"></div>
                             </div>
@@ -209,7 +292,7 @@
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-arrow-down-a-z text-slate-400 text-sm"></i>
                             </div>
-                            <select id="sortDropdown" onchange="applySort(this.value)" class="text-sm bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 py-2 pl-9 pr-8 rounded-lg font-medium cursor-pointer shadow-sm focus:outline-none focus:ring-2 focus:ring-slate-800 appearance-none transition">
+                            <select id="sortDropdown" onchange="applySort(this.value)" class="text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 pl-9 pr-8 rounded-lg font-bold cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/50 appearance-none transition">
                                 <option value="default" data-i18n="sortDefault">Urutan Asli</option>
                                 <option value="asc">A - Z</option>
                                 <option value="desc">Z - A</option>
@@ -222,109 +305,108 @@
 
                         <!-- TOMBOL ACAK LAGI DENGAN ANIMASI BALON TOOLTIP -->
                         <div class="relative">
-                            <button id="btnReshuffle" onclick="hideTooltip('reshuffleTooltip'); applySort('random')" class="hidden text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-bold transition shadow-sm hover:bg-slate-200 dark:hover:bg-slate-600 border border-slate-300 dark:border-slate-600">
+                            <button id="btnReshuffle" onclick="hideTooltip('reshuffleTooltip'); applySort('random')" class="gb-press hidden text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-extrabold transition hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-slate-800 dark:border-slate-500">
                                 <i class="fa-solid fa-dice"></i> <span class="hidden sm:inline ml-1" data-i18n="btnReshuffle">Acak Lagi</span>
                             </button>
-                            <div id="reshuffleTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-[10px] font-bold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
+                            <div id="reshuffleTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-extrabold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
                                 <span data-i18n="reshuffleTip">Tekan ini untuk acak foto</span>
                                 <div class="tooltip-triangle"></div>
                             </div>
                         </div>
 
-                        <button onclick="toggleViewMode()" id="viewModeBtn" class="text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-medium transition flex items-center gap-2 shadow-sm hover:bg-slate-700 dark:hover:bg-slate-600 border border-transparent dark:border-slate-600">
+                        <button onclick="toggleViewMode()" id="viewModeBtn" class="text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-medium transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border border-transparent dark:border-slate-600">
                             <i class="fa-solid fa-filter"></i> <span id="btnViewText">Lihat Pilihan</span> (0)
                         </button>
                     </div>
                 </div>
-                
+
                 <div id="photoGrid" class="mb-8 transition-all duration-300"></div>
                 <div id="paginationContainer" class="flex justify-center items-center gap-3 mt-10 pb-8 hidden"></div>
             </div>
         </div>
     </main>
 
-    <footer id="clientFooter" class="text-center py-6 mt-auto border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 transition-colors">
-        <p class="text-sm text-slate-400">&copy; <script>document.write(new Date().getFullYear())</script> APA BAE,<span id="footerVendorName" class="font-medium text-slate-500 dark:text-slate-300">GAS BAE!</span>.</p>
+    <footer id="clientFooter" class="gb-footer text-center py-6 mt-auto bg-white dark:bg-slate-900 transition-colors">
+        <img src="logo-gasbae.png" alt="Gas Baee" class="h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
+        <p class="text-sm text-slate-500 dark:text-slate-400 font-bold">&copy; <script>document.write(new Date().getFullYear())</script> APA BAE, <span id="footerVendorName" class="font-display text-base text-blue-600 dark:text-blue-400">GAS BAE!</span></p>
     </footer>
 
-    <div id="actionBar" class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-700 shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.5)] transform translate-y-full transition-transform duration-300 z-50">
-        <div id="quotaContainer" class="hidden w-full px-4 md:px-8 pt-3 pb-1 max-w-6xl mx-auto border-b border-slate-100 dark:border-slate-700">
+    <div id="actionBar" class="fixed bottom-0 left-0 w-full bg-white/95 dark:bg-slate-800/95 backdrop-blur-md shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.1)] dark:shadow-[0_-10px_30px_-10px_rgba(0,0,0,0.5)] transform translate-y-full transition-transform duration-300 z-50">
+        <div id="quotaContainer" class="hidden w-full px-4 md:px-8 pt-3 pb-1 max-w-6xl mx-auto border-b border-slate-200 dark:border-slate-700">
             <div class="flex justify-between items-end mb-1.5">
-                <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider" data-i18n="quotaFooter">Kuota Paket Anda</span>
-                <span id="quotaText" class="text-sm font-bold text-slate-800 dark:text-white">0 / 0</span>
+                <span class="text-xs font-extrabold text-slate-500 dark:text-slate-400" data-i18n="quotaFooter">Kuota Paket Anda</span>
+                <span id="quotaText" class="text-sm font-extrabold text-slate-800 dark:text-white">0 / 0</span>
             </div>
-            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2.5 overflow-hidden shadow-inner">
-                <div id="quotaBar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
+            <div class="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-3 overflow-hidden border-2 border-slate-800 dark:border-slate-500">
+                <div id="quotaBar" class="bg-blue-600 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
         </div>
         <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
             <div class="flex items-center gap-4">
-                <div class="bg-slate-900 dark:bg-blue-600 text-white font-bold w-12 h-12 rounded-full flex items-center justify-center text-lg shadow-md shrink-0" id="selectedCount">0</div>
+                <div class="font-display bg-blue-500 text-slate-900 w-12 h-12 rounded-full flex items-center justify-center text-xl border-[3px] border-slate-900 dark:border-slate-50 shrink-0" id="selectedCount">0</div>
                 <div class="hidden sm:block">
-                    <p class="font-bold text-slate-800 dark:text-white" data-i18n="selFooterTitle">Foto Terpilih</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400" data-i18n="selFooterDesc">Kirim daftar ini ke tim kami</p>
+                    <p class="text-lg leading-tight font-display text-slate-800 dark:text-white" data-i18n="selFooterTitle">Foto Terpilih</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold" data-i18n="selFooterDesc">Kirim daftar ini ke tim kami</p>
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <button onclick="downloadList()" class="px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-bold rounded-xl transition flex items-center gap-2 border border-slate-300 dark:border-slate-600 shadow-sm" title="Download file .txt">
+                <button onclick="downloadList()" class="gb-press px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-800 dark:border-slate-500" title="Download file .txt">
                     <i class="fa-solid fa-file-arrow-down text-lg"></i> <span class="hidden md:inline" data-i18n="btnDownload">Download List</span>
                 </button>
-                <button onclick="copyToClipboard()" class="px-5 md:px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition flex items-center gap-2 shadow-lg">
+                <button onclick="copyToClipboard()" class="gb-press px-5 md:px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-900 dark:border-slate-50" style="box-shadow: 4px 4px 0 0 var(--gb-blue);">
                     <i class="fa-brands fa-whatsapp text-xl"></i> <span class="hidden md:inline" data-i18n="btnWA">Kirim WA</span><span class="md:hidden" data-i18n="btnWA">Kirim WA</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="customAlert" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 dark:bg-slate-800 border border-transparent dark:border-slate-600 text-white px-6 py-4 rounded-xl shadow-2xl z-[99] flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0 min-w-[300px] justify-center">
+    <div id="customAlert" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 border-2 border-blue-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[99] flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0 min-w-[300px] justify-center">
         <i id="alertIcon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
         <span id="alertText" class="text-sm font-bold tracking-wide">Notifikasi</span>
     </div>
 
     <div id="tutorialModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300 px-4">
-        <div class="bg-white dark:bg-slate-800 border border-transparent dark:border-slate-700 rounded-3xl max-w-md w-full p-8 shadow-2xl transform scale-95 transition-transform duration-300" id="tutorialContent">
+        <div class="gb-card bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-8 transform scale-95 transition-transform duration-300 relative" id="tutorialContent">
             <div class="absolute top-4 right-4">
                 <button onclick="closeTutorial()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="text-center mb-6 mt-2">
-                <div class="w-16 h-16 bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-3xl mx-auto mb-4 shadow-inner">
-                    <i class="fa-solid fa-lightbulb"></i>
-                </div>
-                <h3 class="text-2xl font-bold text-slate-800 dark:text-white" data-i18n="tutTitle">Cara Memilih Foto</h3>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mt-2" data-i18n="tutDesc">Ikuti panduan mudah ini untuk menyeleksi foto favorit Anda:</p>
+                <img src="logo-gasbae.png" alt="Gas Baee" class="h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
+                <h3 class="text-3xl text-slate-800 dark:text-white" data-i18n="tutTitle">Cara Memilih Foto</h3>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 font-semibold" data-i18n="tutDesc">Ikuti panduan mudah ini untuk menyeleksi foto favorit Anda:</p>
             </div>
             <ul class="space-y-4 mb-8">
                 <li class="flex items-start gap-4">
-                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 shadow-md">1</div>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1" data-i18n="tut1"><strong>Pilih Foto:</strong> Klik (tap) langsung pada gambar foto untuk memilihnya.</p>
+                    <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">1</div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut1"><strong>Pilih Foto:</strong> Klik (tap) langsung pada gambar foto untuk memilihnya.</p>
                 </li>
                 <li class="flex items-start gap-4">
-                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 shadow-md">2</div>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1" data-i18n="tut2"><strong>Zoom & Catatan:</strong> Klik ikon <i class="fa-solid fa-magnifying-glass-plus text-slate-800 dark:text-white mx-1"></i> untuk memperbesar gambar & tambah instruksi edit.</p>
+                    <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">2</div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut2"><strong>Zoom & Catatan:</strong> Klik ikon <i class="fa-solid fa-magnifying-glass-plus text-slate-800 dark:text-white mx-1"></i> untuk memperbesar gambar & tambah instruksi edit.</p>
                 </li>
                 <li class="flex items-start gap-4">
-                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 shadow-md">3</div>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1" data-i18n="tut4"><strong>Tampilan & Urutan:</strong> Klik ikon <i class="fa-solid fa-table-cells-large text-slate-800 dark:text-white mx-1"></i> untuk mengubah jumlah baris grid foto. Gunakan dropdown untuk melihat foto dalam <em>'Urutan Asli'</em> (berdasarkan jam foto) atau <em>'Acak'</em>. Klik tombol <em>'Lihat Pilihan'</em> untuk meninjau foto yang sudah dipilih.</p>
+                    <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">3</div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut4"><strong>Tampilan & Urutan:</strong> Klik ikon <i class="fa-solid fa-table-cells-large text-slate-800 dark:text-white mx-1"></i> untuk mengubah jumlah baris grid foto. Gunakan dropdown untuk melihat foto dalam <em>'Urutan Asli'</em> (berdasarkan jam foto) atau <em>'Acak'</em>. Klik tombol <em>'Lihat Pilihan'</em> untuk meninjau foto yang sudah dipilih.</p>
                 </li>
                 <li class="flex items-start gap-4">
-                    <div class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center font-bold shrink-0 shadow-md">4</div>
-                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1" data-i18n="tut3"><strong>Kirim List:</strong> Jika sudah selesai, klik tombol Kirim WA atau Download di bagian bawah layar.</p>
+                    <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">4</div>
+                    <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut3"><strong>Kirim List:</strong> Jika sudah selesai, klik tombol Kirim WA atau Download di bagian bawah layar.</p>
                 </li>
             </ul>
-            <button onclick="closeTutorial()" class="w-full py-4 bg-slate-900 dark:bg-blue-600 hover:bg-black dark:hover:bg-blue-700 text-white font-bold rounded-xl transition shadow-lg text-sm uppercase tracking-wider" data-i18n="btnTut">
+            <button onclick="closeTutorial()" class="gb-btn-primary gb-press w-full py-4 rounded-xl transition text-lg" data-i18n="btnTut">
                 Mengerti, Mulai Memilih!
             </button>
         </div>
     </div>
 
     <!-- LIGHTBOX ZOOM -->
-    <div id="lightbox" class="fixed inset-0 bg-black/95 z-[60] hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300 backdrop-blur-sm touch-pan-y">
+    <div id="lightbox" class="fixed inset-0 bg-slate-950/95 z-[60] hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300 backdrop-blur-sm touch-pan-y">
         <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-50 bg-gradient-to-b from-black/80 to-transparent">
-            <p id="lightboxTitle" class="text-white font-medium drop-shadow-md text-sm md:text-base ml-2">Photo Name</p>
-            <button onclick="closeLightbox()" class="text-white hover:text-red-400 w-10 h-10 flex items-center justify-center text-2xl bg-black/50 hover:bg-white/20 rounded-full transition"><i class="fa-solid fa-xmark"></i></button>
+            <p id="lightboxTitle" class="text-white font-bold drop-shadow-md text-sm md:text-base ml-2">Photo Name</p>
+            <button onclick="closeLightbox()" class="text-white hover:text-blue-400 w-10 h-10 flex items-center justify-center text-2xl bg-black/50 hover:bg-white/20 rounded-full transition"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <button onclick="prevPhoto(event)" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-left"></i></button>
-        <button onclick="nextPhoto(event)" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-white/20 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-right"></i></button>
+        <button onclick="prevPhoto(event)" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-left"></i></button>
+        <button onclick="nextPhoto(event)" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-right"></i></button>
         <div id="zoomControls" class="absolute top-20 right-3 md:right-6 flex flex-col gap-2 z-50">
             <button onclick="zoomInImage()" title="Perbesar" class="w-10 h-10 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-base shadow-lg transition"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
             <button onclick="zoomOutImage()" title="Perkecil" class="w-10 h-10 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-base shadow-lg transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
@@ -335,23 +417,23 @@
             <div id="lightboxWatermark" class="watermark-layer hidden absolute inset-0 z-20 pointer-events-none"></div>
         </div>
         <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-11/12 max-w-md z-50">
-            <p class="text-white/50 text-xs md:hidden text-center mb-[-5px] animate-pulse"><i class="fa-solid fa-arrows-left-right"></i> <span data-i18n="swipe">Geser kiri/kanan</span></p>
+            <p class="text-white/60 text-xs md:hidden text-center mb-[-5px] animate-pulse"><i class="fa-solid fa-arrows-left-right"></i> <span data-i18n="swipe">Geser kiri/kanan</span></p>
             <button id="lightboxSelectBtn" onclick="toggleLightboxSelect()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition flex items-center justify-center shadow-lg border border-slate-600 w-full sm:w-auto">
                 <i class="fa-regular fa-square-check mr-2"></i> <span id="btnSelectText">Pilih Foto Ini</span>
             </button>
-            <textarea id="lightboxNote" oninput="saveNote()" data-i18n="notePlaceholder" class="w-full bg-slate-800/90 text-white placeholder-slate-400 text-sm rounded-xl p-3 border border-slate-600 focus:outline-none focus:border-slate-400 hidden transition-all shadow-lg backdrop-blur-sm" rows="2" placeholder="Catatan edit (opsional), misal: hapus jerawat..."></textarea>
+            <textarea id="lightboxNote" oninput="saveNote()" data-i18n="notePlaceholder" class="w-full bg-slate-800/90 text-white placeholder-slate-400 text-sm rounded-xl p-3 border border-slate-600 focus:outline-none focus:border-blue-500 hidden transition-all shadow-lg backdrop-blur-sm" rows="2" placeholder="Catatan edit (opsional), misal: hapus jerawat..."></textarea>
         </div>
     </div>
 
     <!-- LOGIKA JAVASCRIPT -->
     <script>
-        const ITEMS_PER_PAGE = 200; 
-        
-        let appState = { 
-            rootFolderId: null, folderId: null, clientName: '', 
+        const ITEMS_PER_PAGE = 200;
+
+        let appState = {
+            rootFolderId: null, folderId: null, clientName: '',
             photos: [], originalPhotos: [], folders: [], folderHistory: [],
-            selectedMap: new Map(), 
-            notes: {}, currentPage: 1, kuota: null, 
+            selectedMap: new Map(),
+            notes: {}, currentPage: 1, kuota: null,
             viewMode: 'all', sortOrder: 'default', lang: 'id',
             gridMode: 2,
             wmMode: false, protMode: false
@@ -359,19 +441,43 @@
 
         // ===== WATERMARK & PROTECTION HELPERS =====
         function getVendorName() {
-            return (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.namaVendor) ? CONFIG_APP.namaVendor : 'Studio Foto';
+            return (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.namaVendor) ? CONFIG_APP.namaVendor : 'Gas Baee';
         }
 
+        // Watermark memakai logo Gas Baee (versi outline). Dibuat sekali jadi tile miring lewat canvas.
+        // Jika gagal (mis. dibuka lewat file://), otomatis pakai watermark teks nama vendor.
         let watermarkDataUri = null;
-        function getWatermarkDataUri() {
-            if (watermarkDataUri) return watermarkDataUri;
+        function getTextWatermarkDataUri() {
             const text = getVendorName();
             const svg = `<svg xmlns='http://www.w3.org/2000/svg' width='260' height='150'>` +
-                `<text x='130' y='80' transform='rotate(-28 130 80)' font-family='Inter, Arial, sans-serif' ` +
-                `font-size='20' font-weight='700' fill='rgba(255,255,255,0.32)' text-anchor='middle'>${text}</text>` +
+                `<text x='130' y='80' transform='rotate(-28 130 80)' font-family='Nunito, Arial, sans-serif' ` +
+                `font-size='20' font-weight='800' fill='rgba(255,255,255,0.32)' text-anchor='middle'>${text}</text>` +
                 `</svg>`;
-            watermarkDataUri = `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
-            return watermarkDataUri;
+            return `url("data:image/svg+xml,${encodeURIComponent(svg)}")`;
+        }
+
+        function buildLogoWatermark() {
+            const img = new Image();
+            img.onload = () => {
+                try {
+                    const W = 300, H = 220;
+                    const c = document.createElement('canvas');
+                    c.width = W; c.height = H;
+                    const ctx = c.getContext('2d');
+                    const lw = 96, lh = lw * img.height / img.width;
+                    ctx.globalAlpha = 0.38;
+                    ctx.translate(W / 2, H / 2);
+                    ctx.rotate(-14 * Math.PI / 180);
+                    ctx.drawImage(img, -lw / 2, -lh / 2, lw, lh);
+                    watermarkDataUri = `url("${c.toDataURL('image/png')}")`;
+                } catch (e) { /* canvas tainted -> pakai fallback teks */ }
+            };
+            img.src = 'logo-gasbae-outline.png';
+        }
+
+        function getWatermarkDataUri() {
+            if (watermarkDataUri) return watermarkDataUri;
+            return getTextWatermarkDataUri();
         }
 
         function createWatermarkLayer(extraClass = '') {
@@ -422,7 +528,7 @@
             id: {
                 subtitle: "Creative Production Cirebon",
                 welcomeTitle: "Hallo",
-                welcomeDesc: "Selamat datang di portal seleksi foto dari <span class='font-bold text-white'>{vendor}</span>.",
+                welcomeDesc: "Selamat datang di portal seleksi foto dari <span class='font-extrabold text-blue-300'>{vendor}</span>.",
                 quotaTitle: "Kuota Paket",
                 quotaMax: "Foto Maksimal",
                 manualTitle: "Akses Manual Galeri",
@@ -449,7 +555,7 @@
                 tut2: "<strong>Zoom & Catatan:</strong> Klik ikon <i class='fa-solid fa-magnifying-glass-plus text-slate-800 dark:text-white mx-1'></i> untuk memperbesar gambar & tambah instruksi edit.",
                 tut4: "<strong>Tampilan & Urutan:</strong> Klik ikon <i class='fa-solid fa-table-cells-large text-slate-800 dark:text-white mx-1'></i> untuk mengubah jumlah baris grid foto. Gunakan dropdown untuk melihat foto dalam <em>'Urutan Asli'</em> (berdasarkan jam foto) atau <em>'Acak'</em>. Klik tombol <em>'Lihat Pilihan'</em> untuk meninjau foto yang sudah dipilih.",
                 tut3: "<strong>Kirim List:</strong> Jika sudah selesai, klik tombol Kirim WA atau Download di bagian bawah layar.",
-                btnTut: "Mengerti, Mulai Memilih!",
+                btnTut: "Mengerti, Gas Pilih!",
                 btnGuide: "Panduan",
                 swipe: "Geser kiri/kanan",
                 btnSelect: "Pilih Foto Ini",
@@ -465,7 +571,7 @@
             en: {
                 subtitle: "Creative Production Cirebon",
                 welcomeTitle: "Hello",
-                welcomeDesc: "Welcome to the photo selection portal from <span class='font-bold text-white'>{vendor}</span>.",
+                welcomeDesc: "Welcome to the photo selection portal from <span class='font-extrabold text-blue-300'>{vendor}</span>.",
                 quotaTitle: "Package Quota",
                 quotaMax: "Max Photos",
                 manualTitle: "Manual Gallery Access",
@@ -492,7 +598,7 @@
                 tut2: "<strong>Zoom & Notes:</strong> Click the <i class='fa-solid fa-magnifying-glass-plus text-slate-800 dark:text-white mx-1'></i> icon to enlarge & add editing instructions.",
                 tut4: "<strong>View & Sort:</strong> Click the <i class='fa-solid fa-table-cells-large text-slate-800 dark:text-white mx-1'></i> icon to change grid layout. Use the dropdown to view photos in <em>'Original Order'</em> or <em>'Random'</em>. Click <em>'View Selection'</em> to review your chosen photos.",
                 tut3: "<strong>Send List:</strong> When finished, click the Send via WA or Download button at the bottom.",
-                btnTut: "Got it, Start Selecting!",
+                btnTut: "Got it, Let's Go!",
                 btnGuide: "Guide",
                 swipe: "Swipe left/right",
                 btnSelect: "Select This Photo",
@@ -533,7 +639,7 @@
 
         function applyTranslations() {
             const langData = TRANSLATIONS[appState.lang];
-            const vendorName = (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.namaVendor) ? CONFIG_APP.namaVendor : 'Studio Foto';
+            const vendorName = getVendorName();
 
             document.querySelectorAll('[data-i18n]').forEach(el => {
                 const key = el.getAttribute('data-i18n');
@@ -550,22 +656,22 @@
             if (currentZoomPhoto) updateLightboxSelectBtn();
         }
 
-        let currentZoomIndex = 0; 
+        let currentZoomIndex = 0;
         let currentZoomPhoto = null;
         let currentImgScale = 1;
         const ZOOM_MIN = 1, ZOOM_MAX = 3, ZOOM_STEP = 0.5;
         let touchstartX = 0;
         let touchendX = 0;
-        let hasSeenTutorial = false; 
+        let hasSeenTutorial = false;
         let tooltipTimeout;
 
         document.addEventListener("DOMContentLoaded", () => {
             updateDarkModeIcon(document.documentElement.classList.contains('dark'));
+            buildLogoWatermark();
 
             if (typeof CONFIG_APP !== 'undefined') {
-                document.getElementById('footerVendorName').textContent = CONFIG_APP.namaVendor || 'Studio Foto';
                 document.getElementById('pageTitle').textContent = `Client Portal - ${CONFIG_APP.namaVendor}`;
-                document.getElementById('headerVendorName').textContent = CONFIG_APP.namaVendor || 'Studio Foto';
+                document.getElementById('headerVendorName').textContent = CONFIG_APP.namaVendor || 'Gas Baee';
             }
 
             const urlParams = new URLSearchParams(window.location.search);
@@ -583,13 +689,13 @@
             } else {
                 document.getElementById('displayClientName').textContent = "Kakak";
             }
-            
+
             if (urlKuota) {
                 try {
                     let paddedKuota = urlKuota;
                     const pad = urlKuota.length % 4;
                     if (pad > 0) paddedKuota += '='.repeat(4 - pad);
-                    
+
                     const decodedKuota = parseInt(atob(paddedKuota));
                     if (!isNaN(decodedKuota) && decodedKuota > 0) {
                         appState.kuota = decodedKuota;
@@ -620,14 +726,14 @@
                 touchendX = e.changedTouches[0].screenX;
                 handleSwipeGesture();
             }, { passive: true });
-            
-            applyTranslations(); 
+
+            applyTranslations();
         });
 
         // FUNGSI ANIMASI BALON TOOLTIP
         function hideTooltip(id) {
             const el = document.getElementById(id);
-            if(el) {
+            if (el) {
                 el.classList.replace('opacity-100', 'opacity-0');
                 setTimeout(() => el.classList.add('hidden'), 300);
             }
@@ -637,10 +743,10 @@
             clearTimeout(tooltipTimeout);
             const gt = document.getElementById('gridTooltip');
             const rt = document.getElementById('reshuffleTooltip');
-            
-            if(gt) { gt.classList.remove('hidden'); setTimeout(()=> gt.classList.replace('opacity-0', 'opacity-100'), 50); }
-            if(rt && document.getElementById('sortDropdown').value === 'random') { rt.classList.remove('hidden'); setTimeout(()=> rt.classList.replace('opacity-0', 'opacity-100'), 50); }
-            
+
+            if (gt) { gt.classList.remove('hidden'); setTimeout(() => gt.classList.replace('opacity-0', 'opacity-100'), 50); }
+            if (rt && document.getElementById('sortDropdown').value === 'random') { rt.classList.remove('hidden'); setTimeout(() => rt.classList.replace('opacity-0', 'opacity-100'), 50); }
+
             // Auto hide tooltip dalam 8 detik agar tidak mengganggu
             tooltipTimeout = setTimeout(() => {
                 hideTooltip('gridTooltip');
@@ -657,7 +763,7 @@
                 appState.gridMode = 2;
             }
             renderGallery();
-            
+
             const lang = appState.lang === 'id' ? 'Tampilan: ' + appState.gridMode + ' Foto per baris' : 'View: ' + appState.gridMode + ' Photos per row';
             showAlert(lang, 'success');
         }
@@ -683,14 +789,14 @@
             setTimeout(() => {
                 modal.classList.remove('flex');
                 modal.classList.add('hidden');
-                
+
                 // Panggil Animasi Balon setelah Panduan ditutup
                 triggerTooltipsAnimation();
             }, 300);
         }
 
         function handleSwipeGesture() {
-            const minSwipeDistance = 50; 
+            const minSwipeDistance = 50;
             if (touchendX < touchstartX - minSwipeDistance) {
                 if (currentZoomIndex < (appState.viewMode === 'selected' ? appState.selectedMap.size : appState.photos.length) - 1) nextPhoto();
             }
@@ -701,9 +807,9 @@
 
         function saveProgress() {
             if (!appState.rootFolderId) return;
-            const dataToSave = { 
-                selected: Array.from(appState.selectedMap.entries()), 
-                notes: appState.notes 
+            const dataToSave = {
+                selected: Array.from(appState.selectedMap.entries()),
+                notes: appState.notes
             };
             localStorage.setItem(`client_portal_save_${appState.rootFolderId}`, JSON.stringify(dataToSave));
         }
@@ -749,17 +855,17 @@
 
         async function loadFromDrive(overrideFolderId = null, folderName = null, isNavigatingBack = false) {
             if (typeof CONFIG_APP === 'undefined' || !CONFIG_APP.googleApiKey) return showAlert('Sistem belum dikonfigurasi.', 'error');
-            
+
             let targetFolderId = overrideFolderId;
-            
+
             if (!targetFolderId) {
                 const link = document.getElementById('driveLink').value.trim();
                 targetFolderId = extractFolderId(link) || link;
                 if (!targetFolderId) return showAlert('Link Google Drive tidak valid.', 'error');
-                
+
                 appState.rootFolderId = targetFolderId;
                 appState.folderHistory = [];
-                loadProgress(appState.rootFolderId); 
+                loadProgress(appState.rootFolderId);
                 document.getElementById('inputSection').classList.add('hidden');
             } else {
                 if (!isNavigatingBack) {
@@ -769,18 +875,18 @@
             }
 
             appState.folderId = targetFolderId;
-            appState.currentPage = 1; 
+            appState.currentPage = 1;
             appState.viewMode = 'all';
-            
+
             const displayTitle = (targetFolderId === appState.rootFolderId) ? TRANSLATIONS[appState.lang].galleryTitle : folderName;
-            document.getElementById('currentFolderDisplay').innerHTML = (targetFolderId === appState.rootFolderId) 
-                ? displayTitle 
+            document.getElementById('currentFolderDisplay').innerHTML = (targetFolderId === appState.rootFolderId)
+                ? displayTitle
                 : `<i class="fa-solid fa-folder-open text-blue-500 mr-2"></i> ${displayTitle}`;
 
             document.getElementById('loadingState').classList.remove('hidden');
             document.getElementById('loadingState').classList.add('flex');
             document.getElementById('galleryContainer').classList.add('hidden');
-            
+
             try {
                 let fetchedFiles = []; let nextPageToken = "";
                 const query = encodeURIComponent(`'${targetFolderId}' in parents and trashed=false`);
@@ -796,26 +902,26 @@
                 if (fetchedFiles.length > 0 || appState.folderHistory.length > 0) {
                     appState.folders = fetchedFiles.filter(f => f.mimeType === 'application/vnd.google-apps.folder');
                     let photoFiles = fetchedFiles.filter(f => f.mimeType !== 'application/vnd.google-apps.folder');
-                    
+
                     // FIX: format URL permanen berbasis ID, tidak kedaluwarsa seperti thumbnailLink
-                    appState.photos = photoFiles.map(f => ({ 
+                    appState.photos = photoFiles.map(f => ({
                         id: f.id, name: f.name, folderName: displayTitle,
-                        url: `https://drive.google.com/thumbnail?id=${f.id}&sz=w500`, 
-                        fullUrl: `https://drive.google.com/thumbnail?id=${f.id}&sz=w1600` 
+                        url: `https://drive.google.com/thumbnail?id=${f.id}&sz=w500`,
+                        fullUrl: `https://drive.google.com/thumbnail?id=${f.id}&sz=w1600`
                     }));
                     appState.originalPhotos = [...appState.photos];
-                    
-                    renderFolders(); 
-                    
+
+                    renderFolders();
+
                     // DEFAULT ACAK SAAT LOADING
                     document.getElementById('sortDropdown').value = 'random';
                     applySort('random');
-                    
-                    if (!overrideFolderId) { 
-                        setTimeout(() => { showTutorial(false); }, 800); 
+
+                    if (!overrideFolderId) {
+                        setTimeout(() => { showTutorial(false); }, 800);
                     } else {
                         // Jika pindah folder dan sudah pernah lihat tutorial, langsung trigger balon
-                        if(hasSeenTutorial) setTimeout(triggerTooltipsAnimation, 500);
+                        if (hasSeenTutorial) setTimeout(triggerTooltipsAnimation, 500);
                     }
                 } else {
                     showAlert('Folder kosong atau hak akses bukan Publik.', 'error');
@@ -847,14 +953,14 @@
 
             appState.folders.forEach(folder => {
                 const btn = document.createElement('button');
-                btn.className = "flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-600 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-md transition text-left group";
-                btn.innerHTML = `<i class="fa-solid fa-folder text-yellow-400 group-hover:text-blue-500 transition text-2xl"></i> <span class="font-bold text-xs md:text-sm text-slate-700 dark:text-slate-200 w-full line-clamp-2">${folder.name}</span>`;
+                btn.className = "gb-press flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-600 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition text-left group";
+                btn.innerHTML = `<i class="fa-solid fa-folder text-blue-500 transition text-2xl"></i> <span class="font-bold text-xs md:text-sm text-slate-700 dark:text-slate-200 w-full line-clamp-2">${folder.name}</span>`;
                 btn.onclick = () => { loadFromDrive(folder.id, folder.name, false); };
                 grid.appendChild(btn);
             });
-            
-            if(appState.folders.length === 0 && appState.folderHistory.length > 0) {
-                 grid.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 col-span-full">Tidak ada sub-folder lagi di dalam sini.</p>`;
+
+            if (appState.folders.length === 0 && appState.folderHistory.length > 0) {
+                grid.innerHTML = `<p class="text-xs text-slate-500 dark:text-slate-400 col-span-full">Tidak ada sub-folder lagi di dalam sini.</p>`;
             }
         }
 
@@ -868,21 +974,21 @@
             appState.sortOrder = order;
             const btnReshuffle = document.getElementById('btnReshuffle');
             const rtTooltip = document.getElementById('reshuffleTooltip');
-            
+
             if (order === 'random') {
                 btnReshuffle.classList.remove('hidden');
-                document.getElementById('sortDropdown').value = 'random'; 
+                document.getElementById('sortDropdown').value = 'random';
             } else {
                 btnReshuffle.classList.add('hidden');
-                if(rtTooltip) hideTooltip('reshuffleTooltip'); // Sembunyikan balon jika bukan acak
+                if (rtTooltip) hideTooltip('reshuffleTooltip'); // Sembunyikan balon jika bukan acak
             }
 
             if (order === 'default') {
                 appState.photos = [...appState.originalPhotos];
             } else if (order === 'asc') {
-                appState.photos.sort((a, b) => a.name.localeCompare(b.name, undefined, {numeric: true, sensitivity: 'base'}));
+                appState.photos.sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true, sensitivity: 'base' }));
             } else if (order === 'desc') {
-                appState.photos.sort((a, b) => b.name.localeCompare(a.name, undefined, {numeric: true, sensitivity: 'base'}));
+                appState.photos.sort((a, b) => b.name.localeCompare(a.name, undefined, { numeric: true, sensitivity: 'base' }));
             } else if (order === 'random') {
                 let array = [...appState.photos];
                 for (let i = array.length - 1; i > 0; i--) {
@@ -893,8 +999,8 @@
             }
             appState.currentPage = 1;
             renderGallery();
-            
-            if(order === 'random') {
+
+            if (order === 'random') {
                 const icon = btnReshuffle.querySelector('i');
                 icon.classList.add('fa-spin');
                 setTimeout(() => icon.classList.remove('fa-spin'), 500);
@@ -906,10 +1012,10 @@
             const langData = TRANSLATIONS[appState.lang];
             if (appState.viewMode === 'all') {
                 btn.innerHTML = `<i class="fa-solid fa-filter"></i> <span id="btnViewText">${langData.btnViewSel}</span> (${appState.selectedMap.size})`;
-                btn.className = "text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-medium transition flex items-center gap-2 shadow-sm hover:bg-slate-700 dark:hover:bg-slate-600 border border-transparent dark:border-slate-600";
+                btn.className = "gb-press text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border-2 border-slate-900 dark:border-slate-500";
             } else {
                 btn.innerHTML = `<i class="fa-solid fa-border-all"></i> <span id="btnViewText">${langData.btnViewAll}</span>`;
-                btn.className = "text-sm bg-blue-600 text-white py-2 px-4 rounded-lg font-medium transition flex items-center gap-2 shadow-sm hover:bg-blue-700 border border-transparent";
+                btn.className = "gb-press text-sm bg-blue-500 text-slate-900 py-2 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-blue-400 border-2 border-slate-900";
             }
         }
 
@@ -917,7 +1023,7 @@
             if (appState.viewMode === 'all') {
                 if (appState.selectedMap.size === 0) return showAlert(TRANSLATIONS[appState.lang].alertEmpty, 'error');
                 appState.viewMode = 'selected';
-                document.getElementById('folderNavContainer').classList.add('hidden'); 
+                document.getElementById('folderNavContainer').classList.add('hidden');
             } else {
                 appState.viewMode = 'all';
                 if (appState.folders.length > 0 || appState.folderHistory.length > 0) {
@@ -933,10 +1039,10 @@
             document.getElementById('loadingState').classList.add('hidden');
             document.getElementById('loadingState').classList.remove('flex');
             document.getElementById('galleryContainer').classList.remove('hidden');
-            
-            const grid = document.getElementById('photoGrid'); 
+
+            const grid = document.getElementById('photoGrid');
             grid.innerHTML = '';
-            
+
             let gridClasses = '';
             let gapClass = '';
             let isSmallGrid = appState.gridMode > 2;
@@ -951,11 +1057,11 @@
                 gridClasses = 'grid-cols-6 md:grid-cols-8 lg:grid-cols-10';
                 gapClass = 'gap-1.5 md:gap-3';
             }
-            
+
             grid.className = `grid ${gridClasses} ${gapClass} mb-8 transition-all duration-300`;
 
-            const photosToProcess = appState.viewMode === 'selected' 
-                ? Array.from(appState.selectedMap.values()) 
+            const photosToProcess = appState.viewMode === 'selected'
+                ? Array.from(appState.selectedMap.values())
                 : appState.photos;
 
             const startIndex = (appState.currentPage - 1) * ITEMS_PER_PAGE;
@@ -963,25 +1069,25 @@
             const photosToShow = photosToProcess.slice(startIndex, endIndex);
 
             photosToShow.forEach((photo, index) => {
-                const globalIndex = appState.photos.findIndex(p => p.id === photo.id); 
+                const globalIndex = appState.photos.findIndex(p => p.id === photo.id);
                 const card = document.createElement('div');
-                card.className = `photo-card relative bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden aspect-square shadow-sm hover:shadow-md ${appState.selectedMap.has(photo.id) ? 'selected' : ''}`;
+                card.className = `photo-card relative bg-slate-100 dark:bg-slate-800 rounded-xl overflow-hidden aspect-square ${appState.selectedMap.has(photo.id) ? 'selected' : ''}`;
                 card.setAttribute('data-photo-id', photo.id);
-                
+
                 const img = document.createElement('img');
-                img.src = photo.url; 
-                img.className = "w-full h-full object-cover cursor-pointer transition-transform duration-300"; 
+                img.src = photo.url;
+                img.className = "w-full h-full object-cover cursor-pointer transition-transform duration-300";
                 img.loading = "lazy";
                 img.draggable = false;
                 img.onclick = () => toggleSelect(photo, card);
-                img.onerror = function() {
+                img.onerror = function () {
                     const attempts = parseInt(this.dataset.attempts || '0');
                     if (attempts < 2) {
                         this.dataset.attempts = attempts + 1;
                         setTimeout(() => { this.src = photo.url + (photo.url.includes('?') ? '&' : '?') + '_r=' + Date.now(); }, 700 * (attempts + 1));
                     } else {
                         this.onerror = null;
-                        this.src = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="%23334155"/><text x="50%" y="50%" fill="%2394a3b8" font-family="sans-serif" font-size="12" text-anchor="middle" dominant-baseline="middle">Gagal Muat, Klik</text></svg>');
+                        this.src = 'data:image/svg+xml;utf8,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="100%" height="100%" fill="#2B3EBF"/><text x="50%" y="50%" fill="#FDF5E6" font-family="sans-serif" font-size="12" font-weight="700" text-anchor="middle" dominant-baseline="middle">Gagal Muat, Klik</text></svg>');
                         this.onclick = () => window.open('https://drive.google.com/file/d/' + photo.id + '/view', '_blank');
                     }
                 };
@@ -990,17 +1096,17 @@
                 if (appState.wmMode) {
                     card.appendChild(createWatermarkLayer());
                 }
-                
+
                 const overlay = document.createElement('div');
                 overlay.className = "selected-overlay absolute inset-0 bg-slate-900/10 dark:bg-black/20 z-10 flex items-start justify-end p-2 pointer-events-none";
-                
+
                 const badgeSize = isSmallGrid ? 'w-5 h-5 text-[10px]' : 'w-8 h-8 text-sm';
-                overlay.innerHTML = `<div class="check-badge bg-blue-600 text-white ${badgeSize} rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-check"></i></div>`;
-                
+                overlay.innerHTML = `<div class="check-badge bg-blue-500 text-slate-900 ${badgeSize} rounded-full flex items-center justify-center shadow-lg"><i class="fa-solid fa-check"></i></div>`;
+
                 if (appState.notes[photo.id]) {
                     const noteBadge = document.createElement('div');
                     const rightPos = isSmallGrid ? 'right-8' : 'right-12';
-                    noteBadge.className = `note-badge absolute top-2 ${rightPos} bg-yellow-500 text-white ${badgeSize} rounded-full flex items-center justify-center shadow-md z-20 pointer-events-none`;
+                    noteBadge.className = `note-badge absolute top-2 ${rightPos} bg-white text-slate-900 ${badgeSize} rounded-full flex items-center justify-center shadow-md z-20 pointer-events-none`;
                     noteBadge.innerHTML = '<i class="fa-solid fa-comment-dots"></i>';
                     overlay.appendChild(noteBadge);
                 }
@@ -1011,15 +1117,15 @@
                 const btnSize = isSmallGrid ? 'w-5 h-5 text-[10px] rounded' : 'w-8 h-8 rounded-lg';
 
                 bottomArea.className = `absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent ${bottomPad} flex justify-between items-end z-20`;
-                
+
                 const nameText = document.createElement('p');
-                nameText.className = `text-white ${textSize} font-medium truncate drop-shadow-md w-3/4`;
+                nameText.className = `text-white ${textSize} font-bold truncate drop-shadow-md w-3/4`;
                 nameText.textContent = photo.name;
 
                 const zoomBtn = document.createElement('button');
-                zoomBtn.className = `text-white bg-black/40 hover:bg-blue-600 ${btnSize} flex items-center justify-center shadow-lg transition-colors`;
+                zoomBtn.className = `text-white bg-black/40 hover:bg-blue-500 hover:text-slate-900 ${btnSize} flex items-center justify-center shadow-lg transition-colors`;
                 zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i>';
-                
+
                 const targetIndex = appState.viewMode === 'selected' ? index : globalIndex;
                 zoomBtn.onclick = (e) => { e.stopPropagation(); openLightbox(targetIndex); };
 
@@ -1043,7 +1149,7 @@
                             badge = document.createElement('div');
                             const rightPos = isSmall ? 'right-8' : 'right-12';
                             const badgeSize = isSmall ? 'w-5 h-5 text-[10px]' : 'w-8 h-8 text-sm';
-                            badge.className = `note-badge absolute top-2 ${rightPos} bg-yellow-500 text-white ${badgeSize} rounded-full flex items-center justify-center shadow-md z-20 pointer-events-none`;
+                            badge.className = `note-badge absolute top-2 ${rightPos} bg-white text-slate-900 ${badgeSize} rounded-full flex items-center justify-center shadow-md z-20 pointer-events-none`;
                             badge.innerHTML = '<i class="fa-solid fa-comment-dots"></i>';
                             overlay.appendChild(badge);
                         }
@@ -1059,19 +1165,19 @@
             container.classList.remove('hidden'); container.innerHTML = '';
 
             const prevBtn = document.createElement('button');
-            prevBtn.className = `px-5 py-2.5 rounded-xl font-medium transition flex items-center gap-2 ${appState.currentPage === 1 ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border border-transparent' : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 shadow-sm'}`;
+            prevBtn.className = `px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === 1 ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
             prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i> Prev';
             prevBtn.disabled = appState.currentPage === 1;
             prevBtn.onclick = () => changePage(appState.currentPage - 1);
             container.appendChild(prevBtn);
 
             const indicator = document.createElement('span');
-            indicator.className = 'px-5 py-2.5 text-sm font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-700 rounded-xl border border-slate-200 dark:border-slate-600';
+            indicator.className = 'font-display px-5 py-2.5 text-base text-slate-900 bg-blue-500 rounded-xl border-2 border-slate-900';
             indicator.textContent = `${appState.currentPage} / ${totalPages}`;
             container.appendChild(indicator);
 
             const nextBtn = document.createElement('button');
-            nextBtn.className = `px-5 py-2.5 rounded-xl font-medium transition flex items-center gap-2 ${appState.currentPage === totalPages ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border border-transparent' : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-600 border border-slate-200 dark:border-slate-600 shadow-sm'}`;
+            nextBtn.className = `px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === totalPages ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
             nextBtn.innerHTML = 'Next <i class="fa-solid fa-chevron-right"></i>';
             nextBtn.disabled = appState.currentPage === totalPages;
             nextBtn.onclick = () => changePage(appState.currentPage + 1);
@@ -1088,14 +1194,14 @@
 
         function toggleSelect(photoObj, cardElement) {
             if (appState.selectedMap.has(photoObj.id)) {
-                appState.selectedMap.delete(photoObj.id); 
-                delete appState.notes[photoObj.id]; 
+                appState.selectedMap.delete(photoObj.id);
+                delete appState.notes[photoObj.id];
                 cardElement.classList.remove('selected');
             } else {
                 if (appState.kuota !== null && appState.selectedMap.size >= appState.kuota) {
                     return showAlert(TRANSLATIONS[appState.lang].alertLimit, 'error');
                 }
-                appState.selectedMap.set(photoObj.id, photoObj); 
+                appState.selectedMap.set(photoObj.id, photoObj);
                 cardElement.classList.add('selected');
             }
             updateActionBar(); saveProgress(); updateGalleryVisuals();
@@ -1106,22 +1212,22 @@
             const count = appState.selectedMap.size;
             const bar = document.getElementById('actionBar');
             document.getElementById('selectedCount').textContent = count;
-            
+
             if (appState.kuota !== null) {
                 const percentage = Math.min((count / appState.kuota) * 100, 100);
                 const quotaBar = document.getElementById('quotaBar');
-                
+
                 document.getElementById('quotaText').textContent = `${count} / ${appState.kuota}`;
                 quotaBar.style.width = `${percentage}%`;
-                
+
                 if (percentage >= 100) {
-                    quotaBar.classList.replace('bg-blue-600', 'bg-green-500'); quotaBar.classList.replace('bg-yellow-500', 'bg-green-500');
+                    quotaBar.classList.remove('bg-blue-600', 'bg-yellow-500'); quotaBar.classList.add('bg-green-500');
                     document.getElementById('quotaText').classList.add('text-green-600'); document.getElementById('quotaText').classList.remove('dark:text-white');
                 } else if (percentage >= 80) {
-                    quotaBar.classList.replace('bg-blue-600', 'bg-yellow-500'); quotaBar.classList.replace('bg-green-500', 'bg-yellow-500');
+                    quotaBar.classList.remove('bg-blue-600', 'bg-green-500'); quotaBar.classList.add('bg-yellow-500');
                     document.getElementById('quotaText').classList.remove('text-green-600'); document.getElementById('quotaText').classList.add('dark:text-white');
                 } else {
-                    quotaBar.classList.replace('bg-green-500', 'bg-blue-600'); quotaBar.classList.replace('bg-yellow-500', 'bg-blue-600');
+                    quotaBar.classList.remove('bg-green-500', 'bg-yellow-500'); quotaBar.classList.add('bg-blue-600');
                     document.getElementById('quotaText').classList.remove('text-green-600'); document.getElementById('quotaText').classList.add('dark:text-white');
                 }
             }
@@ -1131,16 +1237,16 @@
         function downloadList() {
             if (appState.selectedMap.size === 0) return;
             const selectedPhotos = Array.from(appState.selectedMap.values());
-            const vendor = (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.namaVendor) ? CONFIG_APP.namaVendor : 'Studio';
-            
+            const vendor = getVendorName();
+
             let textContent = `LIST FOTO PILIHAN KLIEN\n=======================\nLayanan : ${vendor}\nKlien   : ${appState.clientName || 'Klien'}\nTotal   : ${selectedPhotos.length} Foto\n=======================\n\n`;
-            
+
             selectedPhotos.forEach((p, index) => {
                 const note = appState.notes[p.id];
                 textContent += `${index + 1}. ${p.name} (Folder: ${p.folderName || 'Utama'})\n`;
                 if (note) textContent += `   Catatan: ${note}\n`;
             });
-            
+
             textContent += `\n=======================\nDicetak otomatis melalui ${vendor} Portal\n`;
 
             const blob = new Blob([textContent], { type: 'text/plain' });
@@ -1154,9 +1260,9 @@
         function copyToClipboard() {
             if (appState.selectedMap.size === 0) return;
             const selectedPhotos = Array.from(appState.selectedMap.values());
-            const vendor = (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.namaVendor) ? CONFIG_APP.namaVendor : 'Studio';
+            const vendor = getVendorName();
             const waNumber = (typeof CONFIG_APP !== 'undefined' && CONFIG_APP.whatsappAdmin) ? CONFIG_APP.whatsappAdmin : '';
-            
+
             let textToCopy = `*List Foto Pilihan Client*\nLayanan: ${vendor}\nKlien: *${appState.clientName}*\nTotal: ${selectedPhotos.length} Foto\n\n`;
             selectedPhotos.forEach((p, index) => {
                 const note = appState.notes[p.id];
@@ -1211,7 +1317,7 @@
 
         function setLightboxImgSrc(imgEl, photoObj) {
             imgEl.dataset.attempts = '0';
-            imgEl.onerror = function() {
+            imgEl.onerror = function () {
                 const attempts = parseInt(this.dataset.attempts || '0');
                 if (attempts < 2) {
                     this.dataset.attempts = attempts + 1;
@@ -1245,34 +1351,34 @@
                 imgEl.classList.remove('opacity-100');
                 imgEl.classList.add('opacity-0');
                 imgEl.style.setProperty('--tw-scale-x', 0.95); imgEl.style.setProperty('--tw-scale-y', 0.95);
-                
+
                 setTimeout(() => {
-                    currentZoomIndex = index; 
+                    currentZoomIndex = index;
                     currentZoomPhoto = photosToProcess[index];
                     document.getElementById('lightboxTitle').textContent = `${currentZoomPhoto.name} (${index + 1} of ${photosToProcess.length})`;
                     setLightboxImgSrc(imgEl, currentZoomPhoto);
                     updateLightboxSelectBtn();
-                    
+
                     void imgEl.offsetWidth;
-                    imgEl.classList.remove('opacity-0'); 
+                    imgEl.classList.remove('opacity-0');
                     imgEl.classList.add('opacity-100');
                     currentImgScale = 1; applyImgZoom();
 
                     preloadNeighbors(currentZoomIndex, photosToProcess);
-                }, 200); 
+                }, 200);
 
             } else {
-                currentZoomIndex = index; 
+                currentZoomIndex = index;
                 currentZoomPhoto = photosToProcess[index];
                 document.getElementById('lightboxTitle').textContent = `${currentZoomPhoto.name} (${index + 1} of ${photosToProcess.length})`;
                 setLightboxImgSrc(imgEl, currentZoomPhoto);
                 updateLightboxSelectBtn();
-                
+
                 imgEl.classList.remove('opacity-0');
                 imgEl.classList.add('opacity-100');
                 currentImgScale = 1; applyImgZoom();
-                
-                lightbox.classList.remove('hidden'); 
+
+                lightbox.classList.remove('hidden');
                 setTimeout(() => { lightbox.classList.replace('opacity-0', 'opacity-100'); }, 10);
                 document.body.style.overflow = 'hidden';
 
@@ -1283,25 +1389,25 @@
         function closeLightbox() {
             const lightbox = document.getElementById('lightbox');
             lightbox.classList.replace('opacity-100', 'opacity-0');
-            setTimeout(() => { 
-                lightbox.classList.add('hidden'); currentZoomPhoto = null; document.body.style.overflow = 'auto'; currentImgScale = 1; applyImgZoom(); renderGallery(); 
+            setTimeout(() => {
+                lightbox.classList.add('hidden'); currentZoomPhoto = null; document.body.style.overflow = 'auto'; currentImgScale = 1; applyImgZoom(); renderGallery();
             }, 300);
         }
 
-        function nextPhoto(e) { 
-            if(e) e.stopPropagation(); 
+        function nextPhoto(e) {
+            if (e) e.stopPropagation();
             const photosToProcess = appState.viewMode === 'selected' ? Array.from(appState.selectedMap.values()) : appState.photos;
-            if (currentZoomIndex < photosToProcess.length - 1) openLightbox(currentZoomIndex + 1); 
+            if (currentZoomIndex < photosToProcess.length - 1) openLightbox(currentZoomIndex + 1);
         }
-        function prevPhoto(e) { 
-            if(e) e.stopPropagation(); 
-            if (currentZoomIndex > 0) openLightbox(currentZoomIndex - 1); 
+        function prevPhoto(e) {
+            if (e) e.stopPropagation();
+            if (currentZoomIndex > 0) openLightbox(currentZoomIndex - 1);
         }
 
         function toggleLightboxSelect() {
             if (!currentZoomPhoto) return;
             if (appState.selectedMap.has(currentZoomPhoto.id)) {
-                appState.selectedMap.delete(currentZoomPhoto.id); delete appState.notes[currentZoomPhoto.id]; 
+                appState.selectedMap.delete(currentZoomPhoto.id); delete appState.notes[currentZoomPhoto.id];
             } else {
                 if (appState.kuota !== null && appState.selectedMap.size >= appState.kuota) {
                     return showAlert(TRANSLATIONS[appState.lang].alertLimit, 'error');
@@ -1320,7 +1426,7 @@
 
             if (isSelected) {
                 btn.innerHTML = `<i class="fa-solid fa-check mr-2"></i> <span id="btnSelectText">${langData.btnSelected}</span>`;
-                btn.className = "px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-bold rounded-xl transition flex items-center justify-center shadow-lg w-full sm:w-auto";
+                btn.className = "px-6 py-3 bg-blue-500 hover:bg-blue-400 text-slate-900 font-extrabold rounded-xl transition flex items-center justify-center shadow-lg border-2 border-slate-900 w-full sm:w-auto";
                 noteArea.classList.remove('hidden'); noteArea.value = appState.notes[currentZoomPhoto.id] || '';
             } else {
                 btn.innerHTML = `<i class="fa-regular fa-square-check mr-2"></i> <span id="btnSelectText">${langData.btnSelect}</span>`;
