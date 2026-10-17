@@ -3,110 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin - Auto Link Generator</title>
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#2B3EBF">
+    <title>Admin - Link Generator - Gas Baee</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <script>
+        // Palet Gas Baee: slate = krem -> biru malam, blue = oranye logo
+        tailwind = { config: { theme: { extend: {
+            colors: {
+                slate: {
+                    50: '#FDF6E7', 100: '#FAEBD0', 200: '#EFD8B0', 300: '#D9BF93',
+                    400: '#9C93B8', 500: '#6D6797', 600: '#4A4A8F', 700: '#2E3490',
+                    800: '#1F2670', 900: '#151A52', 950: '#0D1038'
+                },
+                blue: {
+                    50: '#FFF6E5', 100: '#FFE8BF', 200: '#FFD48A', 300: '#FFBE55',
+                    400: '#F8AE35', 500: '#F4A027', 600: '#E5890F', 700: '#C97409',
+                    800: '#9A5806', 900: '#6B3D05'
+                }
+            }
+        } } } }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; }
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+        :root { --gb-orange:#F4A027; --gb-blue:#2B3EBF; --gb-ink:#151A52; --gb-cream:#FDF5E6; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--gb-cream);
+            background-image: radial-gradient(rgba(43, 62, 191, 0.10) 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+        h1, h2, h3, .font-display { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; letter-spacing: .01em; }
+
+        .gb-card { border: 3px solid var(--gb-ink); box-shadow: 8px 8px 0 0 var(--gb-blue); }
+
+        .gb-press { transition: transform .08s ease, box-shadow .08s ease; }
+        .gb-press:active { transform: translate(2px, 2px); box-shadow: 0 0 0 0 transparent !important; }
+        .gb-btn-primary {
+            background: var(--gb-orange); color: var(--gb-ink);
+            border: 3px solid var(--gb-ink); box-shadow: 4px 4px 0 0 var(--gb-blue);
+            font-family: 'Lilita One', sans-serif; letter-spacing: .02em;
+        }
+        .gb-btn-primary:hover { background: #FFB43F; }
+
+        .gb-field { border: 2px solid var(--gb-ink); }
+        .gb-field:focus { outline: none; box-shadow: 0 0 0 4px rgba(244, 160, 39, .5); }
+
+        :focus-visible { outline: 3px solid var(--gb-orange); outline-offset: 2px; }
     </style>
-    <script src="pengaturan.js"></script>
 </head>
-<body class="text-slate-800 flex flex-col items-center justify-center min-h-screen p-4 py-10 gap-6">
+<body class="text-slate-800 flex flex-col items-center justify-center min-h-screen p-4 py-10 gap-5">
+
+    <!-- Navigasi admin -->
+    <nav class="max-w-xl w-full flex justify-between items-center">
+        <a href="/admin" class="gb-press inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-900 rounded-lg text-sm font-extrabold text-slate-800 hover:bg-blue-100 transition" style="box-shadow: 3px 3px 0 0 var(--gb-blue);">
+            <i class="fa-solid fa-arrow-left"></i> Auto RAW Sorter
+        </a>
+        <a href="/api/logout" class="gb-press inline-flex items-center gap-2 px-4 py-2 bg-slate-900 border-2 border-slate-900 rounded-lg text-sm font-extrabold text-white hover:bg-slate-800 transition" style="box-shadow: 3px 3px 0 0 var(--gb-orange);">
+            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </a>
+    </nav>
 
     <!-- BOX UTAMA: GENERATOR LINK -->
-    <div class="bg-white max-w-xl w-full rounded-2xl shadow-xl border border-slate-200 overflow-hidden">
-        <div class="bg-slate-900 px-6 py-5 flex items-center gap-4">
-            <div class="bg-white/20 text-white w-10 h-10 rounded-xl flex items-center justify-center text-lg shadow-inner">
-                <i class="fa-solid fa-link"></i>
-            </div>
+    <div class="gb-card bg-white max-w-xl w-full rounded-2xl overflow-hidden">
+        <div class="bg-slate-900 px-6 py-4 flex items-center gap-4 border-b-4 border-blue-500">
+            <img src="/logo-gasbae.png" alt="Gas Baee" class="h-14 w-auto drop-shadow-md" draggable="false">
             <div>
-                <h1 class="font-bold text-white text-lg">Secure Link Generator</h1>
-                <p class="text-slate-400 text-xs font-medium uppercase tracking-wider">With Quota Hashing & Protection</p>
+                <h1 class="text-2xl text-white leading-tight">Secure Link Generator</h1>
+                <p class="text-blue-400 text-xs font-bold">Dengan kuota terenkripsi & proteksi foto</p>
             </div>
         </div>
 
         <div class="p-6 md:p-8 space-y-5">
             <div class="hidden"><input type="text" id="baseUrl"></div>
 
-            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 space-y-4">
+            <div class="bg-slate-50 p-4 rounded-xl border-2 border-slate-200 space-y-4">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">Nama Klien (Opsional)</label>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Nama Klien (Opsional)</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-user-tag text-slate-400"></i>
                             </div>
-                            <input type="text" id="clientName" placeholder="Cth: Stefany and Jansen" class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-sm">
+                            <input type="text" id="clientName" placeholder="Cth: Stefany and Jansen" class="gb-field w-full pl-9 pr-3 py-2.5 bg-white rounded-lg transition text-sm font-semibold">
                         </div>
                     </div>
                     <div>
-                        <label class="block text-xs font-bold text-slate-700 mb-1.5">No. WA Klien (Opsional)</label>
+                        <label class="block text-xs font-extrabold text-slate-700 mb-1.5">No. WA Klien (Opsional)</label>
                         <div class="relative">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-brands fa-whatsapp text-slate-400"></i>
                             </div>
-                            <input type="number" id="clientPhone" placeholder="Cth: 08123456..." class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-sm">
+                            <input type="number" id="clientPhone" placeholder="Cth: 08123456..." class="gb-field w-full pl-9 pr-3 py-2.5 bg-white rounded-lg transition text-sm font-semibold">
                         </div>
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Link Google Drive Asli <span class="text-red-500">*</span></label>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Link Google Drive Asli <span class="text-red-500">*</span></label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-brands fa-google-drive text-slate-400"></i>
                         </div>
-                        <input type="text" id="driveLink" placeholder="Paste link folder di sini..." class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-sm">
+                        <input type="text" id="driveLink" placeholder="Paste link folder di sini..." class="gb-field w-full pl-9 pr-3 py-2.5 bg-white rounded-lg transition text-sm font-semibold">
                     </div>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold text-slate-700 mb-1.5">Batas Kuota Foto (Opsional)</label>
+                    <label class="block text-xs font-extrabold text-slate-700 mb-1.5">Batas Kuota Foto (Opsional)</label>
                     <div class="relative">
                         <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                             <i class="fa-solid fa-shield-halved text-slate-400"></i>
                         </div>
-                        <input type="number" id="kuota" placeholder="Contoh: 100 (Kosongkan jika bebas)" class="w-full pl-9 pr-3 py-2.5 bg-white border border-slate-300 rounded-lg focus:border-blue-600 outline-none transition text-sm">
+                        <input type="number" id="kuota" placeholder="Contoh: 100 (Kosongkan jika bebas)" class="gb-field w-full pl-9 pr-3 py-2.5 bg-white rounded-lg transition text-sm font-semibold">
                     </div>
                 </div>
             </div>
 
-            <div class="bg-blue-50 p-4 rounded-xl border border-blue-200 space-y-3">
-                <label class="block text-xs font-bold text-blue-800 border-b border-blue-200 pb-2 mb-2"><i class="fa-solid fa-lock mr-1"></i> Proteksi Hak Cipta</label>
+            <div class="bg-blue-100 p-4 rounded-xl border-2 border-blue-500 space-y-3">
+                <label class="block text-sm font-extrabold text-slate-800 border-b-2 border-blue-500/50 pb-2 mb-2"><i class="fa-solid fa-lock mr-1 text-blue-700"></i> Proteksi Hak Cipta</label>
                 <div class="flex flex-col gap-3">
                     <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" id="protCheck" checked class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500">
-                        <span class="text-sm font-medium text-slate-700">Anti-Save & Blackout (Blokir Tahan Layar & Layar Hitam saat buka Snipping Tool)</span>
+                        <input type="checkbox" id="protCheck" checked class="w-4 h-4 rounded accent-orange-500">
+                        <span class="text-sm font-bold text-slate-700">Anti-Save & Blackout (Blokir Tahan Layar & Layar Hitam saat buka Snipping Tool)</span>
                     </label>
                     <label class="flex items-center gap-3 cursor-pointer">
-                        <input type="checkbox" id="wmCheck" checked class="w-4 h-4 text-blue-600 bg-white border-slate-300 rounded focus:ring-blue-500">
-                        <span class="text-sm font-medium text-slate-700">Tampilkan Watermark (Nama Vendor) di atas foto</span>
+                        <input type="checkbox" id="wmCheck" checked class="w-4 h-4 rounded accent-orange-500">
+                        <span class="text-sm font-bold text-slate-700">Tampilkan Watermark (Logo Gas Baee) di atas foto</span>
                     </label>
                 </div>
             </div>
 
             <div>
-                <label class="block text-sm font-bold text-slate-700 mb-1">Format Pesan WhatsApp (Auto-Save)</label>
-                <p class="text-[11px] text-slate-500 mb-2 leading-relaxed">
-                    Gunakan kode <span class="font-mono bg-blue-100 text-blue-700 px-1 rounded">[NAMA]</span> untuk menyisipkan nama, dan <span class="font-mono bg-blue-100 text-blue-700 px-1 rounded">[LINK]</span> untuk tautan galeri. Bebas diedit!
+                <label class="block text-sm font-extrabold text-slate-700 mb-1">Format Pesan WhatsApp (Auto-Save)</label>
+                <p class="text-xs text-slate-500 font-semibold mb-2 leading-relaxed">
+                    Gunakan kode <span class="font-mono bg-blue-100 text-blue-800 px-1 rounded">[NAMA]</span> untuk menyisipkan nama, dan <span class="font-mono bg-blue-100 text-blue-800 px-1 rounded">[LINK]</span> untuk tautan galeri. Bebas diedit!
                 </p>
-                <textarea id="waTemplate" oninput="saveTemplate()" rows="4" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl p-3 text-sm text-slate-700 focus:border-blue-600 outline-none transition resize-none shadow-inner"></textarea>
+                <textarea id="waTemplate" oninput="saveTemplate()" rows="4" class="gb-field w-full bg-slate-50 rounded-xl p-3 text-sm font-semibold text-slate-700 transition resize-none"></textarea>
                 <div class="flex justify-end mt-1">
-                    <button onclick="resetTemplate()" class="text-[10px] font-bold text-slate-400 hover:text-blue-600 transition uppercase tracking-wider"><i class="fa-solid fa-rotate-left"></i> Reset ke Standar</button>
+                    <button onclick="resetTemplate()" class="text-xs font-extrabold text-slate-500 hover:text-blue-700 transition"><i class="fa-solid fa-rotate-left"></i> Reset ke Standar</button>
                 </div>
             </div>
 
-            <button onclick="generateLink()" class="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition flex items-center justify-center gap-2 shadow-lg">
+            <button onclick="generateLink()" class="gb-btn-primary gb-press w-full py-4 rounded-xl transition flex items-center justify-center gap-2 text-xl">
                 <i class="fa-solid fa-wand-magic-sparkles"></i> Buat Link Terenkripsi
             </button>
 
-            <div id="resultBox" class="hidden mt-2 bg-green-50 border border-green-200 rounded-xl p-4 transition-all">
-                <span class="text-xs font-bold text-green-700 uppercase tracking-wider mb-2 block">Link Siap Dikirim!</span>
-                <textarea id="finalUrl" readonly class="w-full bg-white border border-green-200 rounded-lg p-3 text-sm text-slate-700 outline-none resize-none h-24 font-mono font-medium shadow-inner"></textarea>
+            <div id="resultBox" class="hidden mt-2 bg-green-50 border-2 border-green-600 rounded-xl p-4 transition-all">
+                <span class="text-sm font-extrabold text-green-700 mb-2 block">Link siap dikirim!</span>
+                <textarea id="finalUrl" readonly class="w-full bg-white border-2 border-green-300 rounded-lg p-3 text-sm text-slate-700 outline-none resize-none h-24 font-mono font-medium"></textarea>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-3">
-                    <button onclick="copyToClipboard()" class="w-full py-3 bg-slate-800 hover:bg-slate-900 text-white text-sm font-bold rounded-xl transition flex justify-center items-center gap-2 shadow-md">
+                    <button onclick="copyToClipboard()" class="gb-press w-full py-3 bg-slate-800 hover:bg-slate-900 text-white text-sm font-extrabold rounded-xl transition flex justify-center items-center gap-2 border-2 border-slate-900">
                         <i class="fa-solid fa-copy"></i> Salin Teks
                     </button>
-                    <button id="btnSendWA" onclick="sendToClientWA()" class="w-full py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-bold rounded-xl transition flex justify-center items-center gap-2 shadow-md">
+                    <button id="btnSendWA" onclick="sendToClientWA()" class="gb-press w-full py-3 bg-green-600 hover:bg-green-700 text-white text-sm font-extrabold rounded-xl transition flex justify-center items-center gap-2 border-2 border-slate-900">
                         <i class="fa-brands fa-whatsapp text-lg"></i> Kirim ke Klien
                     </button>
                 </div>
@@ -115,7 +168,7 @@
     </div>
 
     <!-- Alert Notifikasi -->
-    <div id="customAlert" class="fixed top-4 bg-slate-900 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0">
+    <div id="customAlert" class="fixed top-4 bg-slate-900 border-2 border-blue-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0">
         <i id="alertIcon" class="fa-solid fa-circle-check text-green-400"></i>
         <span id="alertText" class="text-sm font-bold">Teks tersalin!</span>
     </div>
@@ -124,9 +177,8 @@
         const DEFAULT_TEMPLATE = "Halo [NAMA],\n\nBerikut adalah link galeri foto eksklusif Anda untuk proses seleksi:\n[LINK]\n\nSilakan klik link di atas. Jika ada pertanyaan, balas pesan ini ya. Terima kasih!";
 
         document.addEventListener("DOMContentLoaded", () => {
-            let currentUrl = window.location.href.split('?')[0].split('#')[0];
-            let portalUrl = currentUrl.includes("generatorLink.html") ? currentUrl.replace("generatorLink.html", "") : currentUrl.substring(0, currentUrl.lastIndexOf("/") + 1);
-            document.getElementById('baseUrl').value = portalUrl;
+            // Halaman ini dibuka dari /admin/generator, jadi alamat portal klien = domain utama
+            document.getElementById('baseUrl').value = window.location.origin + '/';
 
             const savedTemplate = localStorage.getItem('customWaTemplate');
             if (savedTemplate) {
@@ -160,7 +212,7 @@
             const match = url.match(/folders\/([a-zA-Z0-9-_]+)/);
             if (match && match[1]) return match[1];
             const matchId = url.match(/id=([a-zA-Z0-9-_]+)/);
-            return matchId && matchId[1] ? matchId[1] : url; 
+            return matchId && matchId[1] ? matchId[1] : url;
         }
 
         function generateLink() {
@@ -177,7 +229,7 @@
 
             let finalUrl = baseUrl.endsWith('/') ? baseUrl : baseUrl + '/';
             let params = [];
-            
+
             if (clientName !== "") {
                 const cleanName = clientName.replace(/\s+/g, '-');
                 params.push(`n=${encodeURIComponent(cleanName)}`);
@@ -187,7 +239,7 @@
                 const hashedKuota = btoa(kuota.toString()).replace(/=/g, '');
                 params.push(`k=${hashedKuota}`);
             }
-            
+
             if (document.getElementById('protCheck').checked) params.push('prot=1');
             if (document.getElementById('wmCheck').checked) params.push('wm=1');
 
@@ -214,9 +266,9 @@
         function copyToClipboard() {
             const finalUrl = document.getElementById('finalUrl').value;
             const clientName = document.getElementById('clientName').value.trim();
-            
+
             let messageToCopy = getMessageTemplate(clientName, finalUrl);
-            
+
             navigator.clipboard.writeText(messageToCopy).then(() => {
                 showAlert('Teks pesan berhasil disalin!');
             }).catch(() => {
@@ -233,9 +285,9 @@
         function sendToClientWA() {
             const finalUrl = document.getElementById('finalUrl').value;
             const clientName = document.getElementById('clientName').value.trim();
-            
-            let rawPhone = document.getElementById('clientPhone').value.replace(/[^0-9]/g, ''); 
-            
+
+            let rawPhone = document.getElementById('clientPhone').value.replace(/[^0-9]/g, '');
+
             let finalPhone = rawPhone;
             if (finalPhone.startsWith('0')) {
                 finalPhone = '62' + finalPhone.substring(1);
@@ -243,13 +295,13 @@
 
             let message = getMessageTemplate(clientName, finalUrl);
             let waUrl = '';
-            
+
             if (finalPhone) {
                 waUrl = `https://wa.me/${finalPhone}?text=${encodeURIComponent(message)}`;
             } else {
                 waUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(message)}`;
             }
-            
+
             window.open(waUrl, '_blank');
         }
     </script>

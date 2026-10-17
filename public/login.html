@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#2B3EBF">
+    <title>Login Admin - Gas Baee</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <script>
+        tailwind = { config: { theme: { extend: { colors: {
+            slate: { 50:'#FDF6E7',100:'#FAEBD0',200:'#EFD8B0',300:'#D9BF93',400:'#9C93B8',500:'#6D6797',600:'#4A4A8F',700:'#2E3490',800:'#1F2670',900:'#151A52' },
+            blue: { 400:'#F8AE35',500:'#F4A027',600:'#E5890F' }
+        } } } } }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;600;700;800&display=swap');
+        :root { --gb-orange:#F4A027; --gb-blue:#2B3EBF; --gb-ink:#151A52; --gb-cream:#FDF5E6; }
+        body { font-family:'Nunito',sans-serif; background-color:var(--gb-cream);
+               background-image:radial-gradient(rgba(43,62,191,.12) 1.5px, transparent 1.5px); background-size:22px 22px; }
+        .font-display { font-family:'Lilita One',sans-serif; font-weight:400; letter-spacing:.01em; }
+        .card { background:#fff; border:3px solid var(--gb-ink); box-shadow:8px 8px 0 0 var(--gb-blue); }
+        .field { border:2px solid var(--gb-ink); }
+        .field:focus { outline:none; box-shadow:0 0 0 4px rgba(244,160,39,.5); }
+        .btn { background:var(--gb-orange); color:var(--gb-ink); border:3px solid var(--gb-ink); box-shadow:4px 4px 0 0 var(--gb-blue);
+               font-family:'Lilita One',sans-serif; letter-spacing:.02em; transition:transform .08s, box-shadow .08s; }
+        .btn:hover { background:#FFB43F; }
+        .btn:active { transform:translate(2px,2px); box-shadow:0 0 0 0 transparent; }
+        .btn:disabled { opacity:.7; cursor:wait; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }
+        .shake { animation:shake .3s; }
+        :focus-visible { outline:3px solid var(--gb-orange); outline-offset:2px; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 text-slate-800">
+    <main id="card" class="card rounded-3xl w-full max-w-md p-8">
+        <img src="logo-gasbae.png" alt="Gas Baee" class="h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
+        <h1 class="font-display text-3xl text-center">Login Admin</h1>
+        <p class="text-center text-sm text-slate-500 font-semibold mt-1 mb-6">Masuk untuk membuka alat admin Gas Baee.</p>
+
+        <form id="form" class="space-y-4" autocomplete="on">
+            <div>
+                <label for="username" class="block text-sm font-extrabold mb-1.5">Username</label>
+                <div class="relative">
+                    <i class="fa-solid fa-user absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input id="username" name="username" type="text" required autocomplete="username" autocapitalize="none" spellcheck="false"
+                           class="field w-full pl-11 pr-4 py-3 rounded-xl bg-slate-50 font-semibold">
+                </div>
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-extrabold mb-1.5">Password</label>
+                <div class="relative">
+                    <i class="fa-solid fa-lock absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input id="password" name="password" type="password" required autocomplete="current-password"
+                           class="field w-full pl-11 pr-12 py-3 rounded-xl bg-slate-50 font-semibold">
+                    <button type="button" id="toggle" aria-label="Tampilkan password"
+                            class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 text-slate-500 hover:text-slate-900">
+                        <i class="fa-solid fa-eye"></i>
+                    </button>
+                </div>
+            </div>
+
+            <p id="error" role="alert" class="hidden text-sm font-bold text-red-600 bg-red-50 border-2 border-red-300 rounded-lg px-3 py-2"></p>
+
+            <button id="submit" type="submit" class="btn w-full py-3.5 rounded-xl text-lg flex items-center justify-center gap-2">
+                <i class="fa-solid fa-right-to-bracket"></i> <span>Masuk</span>
+            </button>
+        </form>
+    </main>
+
+    <script>
+        const form = document.getElementById('form');
+        const err = document.getElementById('error');
+        const btn = document.getElementById('submit');
+        const pw = document.getElementById('password');
+
+        document.getElementById('toggle').onclick = () => {
+            const show = pw.type === 'password';
+            pw.type = show ? 'text' : 'password';
+            document.querySelector('#toggle i').className = show ? 'fa-solid fa-eye-slash' : 'fa-solid fa-eye';
+        };
+
+        function fail(msg) {
+            err.textContent = msg;
+            err.classList.remove('hidden');
+            const card = document.getElementById('card');
+            card.classList.remove('shake'); void card.offsetWidth; card.classList.add('shake');
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            err.classList.add('hidden');
+            btn.disabled = true;
+            btn.querySelector('span').textContent = 'Memeriksa...';
+            try {
+                const r = await fetch('/api/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('username').value,
+                        password: pw.value
+                    })
+                });
+                if (r.ok) { location.href = '/admin'; return; }
+                fail(r.status === 401 ? 'Username atau password salah.' : 'Login gagal. Coba lagi sebentar lagi.');
+            } catch (_) {
+                fail('Tidak bisa terhubung ke server. Cek koneksi internet.');
+            }
+            btn.disabled = false;
+            btn.querySelector('span').textContent = 'Masuk';
+        });
+    </script>
+</body>
+</html>
