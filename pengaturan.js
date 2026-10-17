@@ -8,6 +8,6 @@ const CONFIG_APP = {
     namaVendor: "Gasbaee",
 
     // 2. Google Drive API Key (Penting agar galeri bisa memuat foto)
-    googleApiKey: "AIzaSyAZczbLeVTXl-QKqLDJFWQLCd-lW9jqqxo",
+    googleApiKey: "AIzaSyA5olm-WtqIjV2LxSqhF5gc85cQGqEWxpI",
     whatsappAdmin: "62821000000000" // <-- TAMBAHKAN BARIS INI (Ganti dengan nomor WA admin)
 };
