@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="robots" content="noindex, nofollow">
+    <meta name="theme-color" content="#2B3EBF">
+    <title>Kelola Link & Kuota - Gas Baee</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+
+    <script>
+        // Palet Gas Baee: slate = krem -> biru malam, blue = oranye logo
+        tailwind = { config: { theme: { extend: {
+            colors: {
+                slate: {
+                    50: '#FDF6E7', 100: '#FAEBD0', 200: '#EFD8B0', 300: '#D9BF93',
+                    400: '#9C93B8', 500: '#6D6797', 600: '#4A4A8F', 700: '#2E3490',
+                    800: '#1F2670', 900: '#151A52', 950: '#0D1038'
+                },
+                blue: {
+                    50: '#FFF6E5', 100: '#FFE8BF', 200: '#FFD48A', 300: '#FFBE55',
+                    400: '#F8AE35', 500: '#F4A027', 600: '#E5890F', 700: '#C97409',
+                    800: '#9A5806', 900: '#6B3D05'
+                }
+            }
+        } } } }
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;500;600;700;800&display=swap');
+
+        :root { --gb-orange:#F4A027; --gb-blue:#2B3EBF; --gb-ink:#151A52; --gb-cream:#FDF5E6; }
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background-color: var(--gb-cream);
+            background-image: radial-gradient(rgba(43, 62, 191, 0.10) 1.5px, transparent 1.5px);
+            background-size: 22px 22px;
+        }
+        h1, h2, h3, .font-display { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; letter-spacing: .01em; }
+
+        .gb-card { border: 3px solid var(--gb-ink); box-shadow: 6px 6px 0 0 var(--gb-blue); }
+        .gb-press { transition: transform .08s ease, box-shadow .08s ease; }
+        .gb-press:active:not(:disabled) { transform: translate(2px, 2px); box-shadow: 0 0 0 0 transparent !important; }
+        .gb-btn-primary {
+            background: var(--gb-orange); color: var(--gb-ink);
+            border: 3px solid var(--gb-ink); box-shadow: 3px 3px 0 0 var(--gb-blue);
+            font-family: 'Lilita One', sans-serif; letter-spacing: .02em;
+        }
+        .gb-btn-primary:hover:not(:disabled) { background: #FFB43F; }
+        .gb-btn-primary:disabled { opacity: .5; cursor: not-allowed; }
+        .gb-field { border: 2px solid var(--gb-ink); }
+        .gb-field:focus { outline: none; box-shadow: 0 0 0 4px rgba(244, 160, 39, .5); }
+        .row-dirty { border-color: var(--gb-orange); box-shadow: 6px 6px 0 0 var(--gb-orange); }
+        :focus-visible { outline: 3px solid var(--gb-orange); outline-offset: 2px; }
+    </style>
+</head>
+<body class="text-slate-800 flex flex-col items-center min-h-screen p-4 py-8 gap-5">
+
+    <nav class="max-w-3xl w-full flex flex-wrap justify-between items-center gap-2">
+        <div class="flex gap-2">
+            <a href="/admin" class="gb-press inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-900 rounded-lg text-sm font-extrabold text-slate-800 hover:bg-blue-100 transition" style="box-shadow: 3px 3px 0 0 var(--gb-blue);">
+                <i class="fa-solid fa-arrow-left"></i> Auto RAW Sorter
+            </a>
+            <a href="/admin/generator" class="gb-press inline-flex items-center gap-2 px-4 py-2 bg-white border-2 border-slate-900 rounded-lg text-sm font-extrabold text-slate-800 hover:bg-blue-100 transition" style="box-shadow: 3px 3px 0 0 var(--gb-blue);">
+                <i class="fa-solid fa-link"></i> Generator
+            </a>
+        </div>
+        <a href="/api/logout" class="gb-press inline-flex items-center gap-2 px-4 py-2 bg-slate-900 border-2 border-slate-900 rounded-lg text-sm font-extrabold text-white hover:bg-slate-800 transition" style="box-shadow: 3px 3px 0 0 var(--gb-orange);">
+            <i class="fa-solid fa-right-from-bracket"></i> Keluar
+        </a>
+    </nav>
+
+    <div class="gb-card bg-white max-w-3xl w-full rounded-2xl overflow-hidden">
+        <div class="bg-slate-900 px-6 py-4 flex items-center gap-4 border-b-4 border-blue-500">
+            <img src="/logo-gasbae.png" alt="Gas Baee" class="h-14 w-auto drop-shadow-md" draggable="false">
+            <div class="min-w-0">
+                <h1 class="text-2xl text-white leading-tight">Kelola Link & Kuota</h1>
+                <p class="text-blue-400 text-xs font-bold">Ubah kuota kapan saja, link klien tidak perlu dikirim ulang</p>
+            </div>
+        </div>
+
+        <div class="p-4 sm:p-6 space-y-4">
+            <div class="flex flex-col sm:flex-row gap-3">
+                <div class="relative flex-1">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none"><i class="fa-solid fa-magnifying-glass text-slate-400"></i></div>
+                    <input id="search" type="text" oninput="render()" placeholder="Cari nama klien..." class="gb-field w-full pl-9 pr-3 py-2.5 bg-slate-50 rounded-lg text-sm font-semibold">
+                </div>
+                <a href="/admin/generator" class="gb-btn-primary gb-press px-5 py-2.5 rounded-xl text-center text-base flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Link Baru
+                </a>
+            </div>
+
+            <p id="summary" class="text-xs font-bold text-slate-500"></p>
+
+            <!-- Petunjuk jika database belum aktif -->
+            <div id="dbWarn" class="hidden bg-blue-100 border-2 border-blue-500 rounded-xl p-4 text-sm font-semibold text-slate-800 space-y-2">
+                <p class="font-extrabold"><i class="fa-solid fa-database text-blue-700 mr-1"></i> Database belum terhubung</p>
+                <p>Halaman ini menyimpan data link di Upstash Redis. Cara mengaktifkan (sekali saja):</p>
+                <ol class="list-decimal pl-5 space-y-1">
+                    <li>Buka project di Vercel, tab <b>Storage</b> (atau <b>Marketplace</b>), pilih <b>Upstash Redis</b> lalu buat database gratis.</li>
+                    <li>Hubungkan database itu ke project ini, lalu <b>Redeploy</b>.</li>
+                </ol>
+                <p class="text-xs text-slate-600">Variabel <span class="font-mono">UPSTASH_REDIS_REST_URL</span> dan <span class="font-mono">UPSTASH_REDIS_REST_TOKEN</span> (atau <span class="font-mono">KV_REST_API_URL</span> dan <span class="font-mono">KV_REST_API_TOKEN</span>) akan terisi otomatis.</p>
+            </div>
+
+            <div id="loading" class="text-center py-10 text-slate-500 font-bold"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-500 mb-3 block"></i> Memuat daftar link...</div>
+            <div id="empty" class="hidden text-center py-10 text-slate-500 font-bold">Belum ada link. Buat yang pertama lewat Generator.</div>
+            <div id="list" class="space-y-4"></div>
+        </div>
+    </div>
+
+    <div id="customAlert" class="fixed top-4 bg-slate-900 border-2 border-blue-500 text-white px-6 py-4 rounded-xl shadow-2xl z-50 flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0 max-w-[92vw]">
+        <i id="alertIcon" class="fa-solid fa-circle-check text-green-400"></i>
+        <span id="alertText" class="text-sm font-bold">OK</span>
+    </div>
+
+    <script>
+        const DEFAULT_TEMPLATE = "Halo [NAMA],\n\nBerikut adalah link galeri foto eksklusif Anda untuk proses seleksi:\n[LINK]\n\nSilakan klik link di atas. Jika ada pertanyaan, balas pesan ini ya. Terima kasih!";
+        let links = [];
+
+        function esc(s) {
+            return String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+        }
+
+        function showAlert(message, isError = false) {
+            const box = document.getElementById('customAlert');
+            document.getElementById('alertText').textContent = message;
+            document.getElementById('alertIcon').className = isError ? "fa-solid fa-triangle-exclamation text-red-400" : "fa-solid fa-circle-check text-green-400";
+            box.classList.remove('-translate-y-32', 'opacity-0');
+            clearTimeout(showAlert.t);
+            showAlert.t = setTimeout(() => box.classList.add('-translate-y-32', 'opacity-0'), 3000);
+        }
+
+        async function api(method, url, body) {
+            const r = await fetch(url, {
+                method,
+                headers: { 'Content-Type': 'application/json' },
+                body: body ? JSON.stringify(body) : undefined
+            });
+            if (r.status === 401) { location.href = '/login'; throw new Error('401'); }
+            const data = await r.json().catch(() => ({}));
+            if (!r.ok) { const e = new Error(data.error || 'Gagal'); e.code = data.error; throw e; }
+            return data;
+        }
+
+        function linkUrl(id) { return location.origin + '/?id=' + encodeURIComponent(id); }
+
+        async function load() {
+            try {
+                const d = await api('GET', '/api/links');
+                links = d.links || [];
+            } catch (e) {
+                document.getElementById('loading').classList.add('hidden');
+                if (e.code === 'DB_NOT_CONFIGURED') document.getElementById('dbWarn').classList.remove('hidden');
+                else if (e.message !== '401') showAlert('Gagal memuat daftar link.', true);
+                return;
+            }
+            document.getElementById('loading').classList.add('hidden');
+            render();
+        }
+
+        function render() {
+            const q = document.getElementById('search').value.trim().toLowerCase();
+            const shown = links.filter(l => !q || (l.name || '').toLowerCase().includes(q));
+            const list = document.getElementById('list');
+            list.innerHTML = '';
+            document.getElementById('empty').classList.toggle('hidden', links.length > 0);
+            document.getElementById('summary').textContent = links.length ? `${shown.length} dari ${links.length} link` : '';
+
+            shown.forEach(l => {
+                const date = l.createdAt ? new Date(l.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' }) : '';
+                const card = document.createElement('div');
+                card.className = 'gb-card bg-white rounded-2xl p-4 space-y-3';
+                card.dataset.id = l.id;
+                card.innerHTML = `
+                    <div class="flex flex-wrap items-center justify-between gap-2">
+                        <div class="min-w-0">
+                            <p class="font-extrabold text-slate-800 truncate">${esc(l.name) || '<span class="text-slate-400">(tanpa nama)</span>'}</p>
+                            <p class="text-xs text-slate-500 font-semibold">Dibuat ${esc(date)} · <span class="font-mono">${esc(l.id)}</span></p>
+                        </div>
+                        <span data-role="status" class="text-xs font-extrabold px-2 py-1 rounded-lg bg-slate-100 text-slate-600 border-2 border-slate-200">${l.quota > 0 ? 'Kuota ' + l.quota : 'Tanpa batas'}</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Nama Klien</label>
+                            <input data-f="name" type="text" value="${esc(l.name)}" maxlength="80" class="gb-field w-full px-3 py-2 bg-white rounded-lg text-sm font-semibold">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-extrabold text-slate-700 mb-1">Kuota Foto (kosong = tanpa batas)</label>
+                            <div class="flex gap-2">
+                                <input data-f="quota" type="number" min="0" value="${l.quota > 0 ? l.quota : ''}" placeholder="Tanpa batas" class="gb-field w-full px-3 py-2 bg-white rounded-lg text-sm font-semibold">
+                                <button type="button" data-act="plus" class="gb-press shrink-0 px-3 bg-slate-100 hover:bg-blue-100 border-2 border-slate-900 rounded-lg text-xs font-extrabold" title="Tambah 10 foto">+10</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex flex-wrap gap-x-5 gap-y-2">
+                        <label class="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer"><input data-f="prot" type="checkbox" ${l.prot ? 'checked' : ''} class="w-4 h-4 accent-orange-500"> Anti-Save & Blackout</label>
+                        <label class="flex items-center gap-2 text-sm font-bold text-slate-700 cursor-pointer"><input data-f="wm" type="checkbox" ${l.wm ? 'checked' : ''} class="w-4 h-4 accent-orange-500"> Watermark</label>
+                    </div>
+
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button data-act="save" disabled class="gb-btn-primary gb-press px-4 py-2 rounded-xl text-base flex items-center gap-2"><i class="fa-solid fa-floppy-disk"></i> Simpan</button>
+                        <button data-act="copy" class="gb-press px-3 py-2 bg-slate-800 hover:bg-slate-900 text-white text-sm font-extrabold rounded-xl border-2 border-slate-900 flex items-center gap-2"><i class="fa-solid fa-copy"></i> Salin Link</button>
+                        <button data-act="wa" class="gb-press px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm font-extrabold rounded-xl border-2 border-slate-900 flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> ${l.phone ? 'Kirim WA' : 'Buka WA'}</button>
+                        <a href="${esc(linkUrl(l.id))}" target="_blank" rel="noopener" class="gb-press px-3 py-2 bg-white hover:bg-blue-100 text-slate-800 text-sm font-extrabold rounded-xl border-2 border-slate-900 flex items-center gap-2"><i class="fa-solid fa-arrow-up-right-from-square"></i> Buka</a>
+                        <button data-act="del" class="gb-press ml-auto px-3 py-2 bg-white hover:bg-red-50 text-red-600 text-sm font-extrabold rounded-xl border-2 border-red-300 flex items-center gap-2"><i class="fa-solid fa-trash"></i> Hapus</button>
+                    </div>`;
+                list.appendChild(card);
+            });
+        }
+
+        function readCard(card) {
+            return {
+                name: card.querySelector('[data-f="name"]').value.trim(),
+                quota: parseInt(card.querySelector('[data-f="quota"]').value, 10) || 0,
+                prot: card.querySelector('[data-f="prot"]').checked,
+                wm: card.querySelector('[data-f="wm"]').checked
+            };
+        }
+
+        function markDirty(card) {
+            const l = links.find(x => x.id === card.dataset.id);
+            const v = readCard(card);
+            const dirty = v.name !== (l.name || '') || v.quota !== (l.quota || 0) || v.prot !== !!l.prot || v.wm !== !!l.wm;
+            card.classList.toggle('row-dirty', dirty);
+            card.querySelector('[data-act="save"]').disabled = !dirty;
+        }
+
+        const listEl = document.getElementById('list');
+        listEl.addEventListener('input', e => { const c = e.target.closest('[data-id]'); if (c) markDirty(c); });
+        listEl.addEventListener('change', e => { const c = e.target.closest('[data-id]'); if (c) markDirty(c); });
+
+        listEl.addEventListener('click', async e => {
+            const btn = e.target.closest('[data-act]');
+            if (!btn) return;
+            const card = btn.closest('[data-id]');
+            const l = links.find(x => x.id === card.dataset.id);
+            const act = btn.dataset.act;
+
+            if (act === 'plus') {
+                const inp = card.querySelector('[data-f="quota"]');
+                inp.value = (parseInt(inp.value, 10) || 0) + 10;
+                markDirty(card);
+            }
+
+            if (act === 'save') {
+                btn.disabled = true;
+                try {
+                    const updated = await api('PUT', '/api/links', { id: l.id, ...readCard(card) });
+                    Object.assign(l, updated);
+                    render();
+                    showAlert('Tersimpan. Klien langsung memakai pengaturan baru.');
+                } catch (err) { btn.disabled = false; showAlert('Gagal menyimpan. Coba lagi.', true); }
+            }
+
+            if (act === 'copy') {
+                try { await navigator.clipboard.writeText(linkUrl(l.id)); showAlert('Link disalin!'); }
+                catch (_) { showAlert('Tidak bisa menyalin otomatis.', true); }
+            }
+
+            if (act === 'wa') {
+                const template = localStorage.getItem('customWaTemplate') || DEFAULT_TEMPLATE;
+                const msg = template.replace(/\[NAMA\]/g, l.name ? `Kak ${l.name}` : 'Kakak').replace(/\[LINK\]/g, linkUrl(l.id));
+                let phone = (l.phone || '').replace(/[^0-9]/g, '');
+                if (phone.startsWith('0')) phone = '62' + phone.slice(1);
+                const url = phone
+                    ? `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`
+                    : `https://api.whatsapp.com/send?text=${encodeURIComponent(msg)}`;
+                window.open(url, '_blank');
+            }
+
+            if (act === 'del') {
+                if (!confirm(`Hapus link "${l.name || l.id}"?\nLink yang sudah dikirim ke klien akan berhenti berfungsi.`)) return;
+                try {
+                    await api('DELETE', '/api/links?id=' + encodeURIComponent(l.id));
+                    links = links.filter(x => x.id !== l.id);
+                    render();
+                    showAlert('Link dihapus.');
+                } catch (err) { showAlert('Gagal menghapus.', true); }
+            }
+        });
+
+        load();
+    </script>
+</body>
+</html>

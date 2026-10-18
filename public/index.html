@@ -853,7 +853,7 @@
         let hasSeenTutorial = false;
         let tooltipTimeout;
 
-        document.addEventListener("DOMContentLoaded", () => {
+        document.addEventListener("DOMContentLoaded", async () => {
             updateDarkModeIcon(document.documentElement.classList.contains('dark'));
             buildLogoWatermark();
 
@@ -863,11 +863,31 @@
             }
 
             const urlParams = new URLSearchParams(window.location.search);
-            const urlName = urlParams.get('n');
-            const urlKuota = urlParams.get('k');
-            const autoId = urlParams.get('i');
+            let urlName = urlParams.get('n');
+            let urlKuota = urlParams.get('k');
+            let autoId = urlParams.get('i');
             appState.wmMode = urlParams.get('wm') === '1';
             appState.protMode = urlParams.get('prot') === '1';
+
+            // Link terkelola (?id=xxxx): kuota, nama, folder & proteksi diambil dari server,
+            // jadi admin bisa mengubahnya kapan saja lewat halaman /admin/links
+            const linkId = urlParams.get('id');
+            let isManagedLink = false;
+            if (linkId) {
+                try {
+                    const r = await fetch('/api/link?id=' + encodeURIComponent(linkId), { cache: 'no-store' });
+                    if (!r.ok) throw new Error('link');
+                    const d = await r.json();
+                    isManagedLink = true;
+                    urlName = d.name ? encodeURIComponent(String(d.name).replace(/\s+/g, '-')) : null;
+                    urlKuota = d.quota > 0 ? String(d.quota) : null;
+                    autoId = d.folderId || null;
+                    appState.wmMode = !!d.wm;
+                    appState.protMode = !!d.prot;
+                } catch (e) {
+                    showAlert('Link tidak valid atau sudah dinonaktifkan. Hubungi admin.', 'error');
+                }
+            }
             initProtection();
 
             if (urlName) {
@@ -878,22 +898,32 @@
                 document.getElementById('displayClientName').textContent = "Kakak";
             }
 
+            // Kuota foto: prioritas 1) parameter ?k= di link, 2) kuotaDefault di pengaturan.js
+            // ?k= boleh angka biasa (k=30) atau base64 (k=MzA)
+            let kuotaValue = null;
             if (urlKuota) {
                 try {
-                    let paddedKuota = urlKuota;
-                    const pad = urlKuota.length % 4;
-                    if (pad > 0) paddedKuota += '='.repeat(4 - pad);
-
-                    const decodedKuota = parseInt(atob(paddedKuota));
-                    if (!isNaN(decodedKuota) && decodedKuota > 0) {
-                        appState.kuota = decodedKuota;
-                        document.getElementById('quotaContainer').classList.remove('hidden');
-                        document.getElementById('quotaContainer').classList.add('block');
-                        document.getElementById('greetingQuotaInfo').classList.remove('hidden');
-                        document.getElementById('greetingQuotaInfo').classList.add('flex');
-                        document.getElementById('greetingQuotaLimit').textContent = appState.kuota;
+                    if (/^\d+$/.test(urlKuota)) {
+                        kuotaValue = parseInt(urlKuota, 10);
+                    } else {
+                        let paddedKuota = urlKuota;
+                        const pad = urlKuota.length % 4;
+                        if (pad > 0) paddedKuota += '='.repeat(4 - pad);
+                        kuotaValue = parseInt(atob(paddedKuota), 10);
                     }
                 } catch (e) { console.error("Hash kuota tidak valid."); }
+            }
+            if (!isManagedLink && (!kuotaValue || isNaN(kuotaValue) || kuotaValue <= 0) &&
+                typeof CONFIG_APP !== 'undefined' && parseInt(CONFIG_APP.kuotaDefault, 10) > 0) {
+                kuotaValue = parseInt(CONFIG_APP.kuotaDefault, 10);
+            }
+            if (kuotaValue && !isNaN(kuotaValue) && kuotaValue > 0) {
+                appState.kuota = kuotaValue;
+                document.getElementById('quotaContainer').classList.remove('hidden');
+                document.getElementById('quotaContainer').classList.add('block');
+                document.getElementById('greetingQuotaInfo').classList.remove('hidden');
+                document.getElementById('greetingQuotaInfo').classList.add('flex');
+                document.getElementById('greetingQuotaLimit').textContent = appState.kuota;
             }
 
             if (autoId) {

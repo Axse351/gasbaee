@@ -4,8 +4,9 @@ const { getUser } = require('./_auth');
 
 // URL -> file di folder /private (di luar folder publik)
 const PAGES = {
-  '': 'sorter.html',            // /admin
-  generator: 'generatorLink.html' // /admin/generator
+  '': 'sorter.html',               // /admin
+  generator: 'generatorLink.html', // /admin/generator
+  links: 'linkmanager.html'        // /admin/links
 };
 
 module.exports = (req, res) => {
