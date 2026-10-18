@@ -49,7 +49,8 @@
         (function () {
             const isDark = document.documentElement.classList.contains('dark');
             document.querySelector('meta[name="color-scheme"]').content = isDark ? 'dark' : 'light';
-            document.querySelector('meta[name="theme-color"]').content = isDark ? '#0D1038' : '#2B3EBF';
+            // Dark mode: status bar HP ikut hitam
+            document.querySelector('meta[name="theme-color"]').content = isDark ? '#000000' : '#2B3EBF';
         })();
     </script>
 
@@ -213,6 +214,13 @@
             box-shadow: 0 4px 0 0 var(--gb-blue), 0 12px 30px -10px rgba(244, 160, 39, 0.35);
         }
         .dark footer.gb-footer { border-top-color: var(--gb-orange) !important; }
+
+        /* Header & footer hitam saat dark mode */
+        .dark header.gb-header,
+        .dark footer.gb-footer {
+            background-color: #000 !important;
+        }
+
         .dark .gb-hero {
             box-shadow: 8px 8px 0 0 var(--gb-orange), 0 0 60px -10px rgba(244, 160, 39, 0.35);
         }
@@ -321,7 +329,7 @@
                      class="logo-dark logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
 
                 <div class="relative z-10 max-w-xl min-w-0">
-                    <h2 class="text-2xl sm:text-3xl md:text-5xl mb-2 break-words"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-yellow-400 capitalize">Kakak</span> 👋</h2>
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl mb-2 break-words"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
                     <p class="text-slate-100 text-sm md:text-base leading-relaxed font-semibold" data-i18n="welcomeDesc">Selamat datang di portal seleksi foto dari {vendor}.</p>
                 </div>
 
@@ -749,7 +757,8 @@
                 const csMeta = document.querySelector('meta[name="color-scheme"]');
                 if (csMeta) csMeta.content = isDark ? 'dark' : 'light';
                 const tcMeta = document.querySelector('meta[name="theme-color"]');
-                if (tcMeta) tcMeta.content = isDark ? '#0D1038' : '#2B3EBF';
+                // Dark mode: status bar HP ikut hitam
+                if (tcMeta) tcMeta.content = isDark ? '#000000' : '#2B3EBF';
                 updateDarkModeIcon(isDark);
             };
 
@@ -1598,4 +1607,4 @@
         }
     </script>
 </body>
-</html> 
+</html>
