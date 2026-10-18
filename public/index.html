@@ -2,7 +2,7 @@
 <html lang="id" class="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title id="pageTitle">Gas Baee - Client Portal</title>
     <link rel="icon" type="image/png" href="favicon.png">
     <meta name="theme-color" content="#2B3EBF">
@@ -57,6 +57,8 @@
             --gb-cream: #FDF5E6;
         }
 
+        html { -webkit-text-size-adjust: 100%; }
+
         body {
             font-family: 'Nunito', sans-serif;
             overflow-x: hidden;
@@ -68,15 +70,25 @@
 
         h1, h2, h3, .font-display { font-family: 'Lilita One', system-ui, sans-serif; font-weight: 400; letter-spacing: 0.01em; }
 
+        /* Hilangkan delay double-tap zoom pada elemen interaktif */
+        button, a, select, .photo-card { touch-action: manipulation; }
+
         ::-webkit-scrollbar { width: 10px; }
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--gb-blue); border-radius: 6px; border: 2px solid var(--gb-cream); }
         .dark ::-webkit-scrollbar-thumb { background: var(--gb-orange); border-color: var(--gb-ink); }
 
         /* Header & footer: garis tebal oranye seperti blok huruf di logo */
-        header.gb-header { border-bottom: 4px solid var(--gb-orange) !important; box-shadow: 0 4px 0 0 var(--gb-blue); }
+        header.gb-header {
+            border-bottom: 4px solid var(--gb-orange) !important;
+            box-shadow: 0 4px 0 0 var(--gb-blue);
+            padding-top: env(safe-area-inset-top, 0px);
+        }
         footer.gb-footer { border-top: 4px solid var(--gb-blue) !important; }
-        #actionBar { border-top: 4px solid var(--gb-orange) !important; }
+        #actionBar {
+            border-top: 4px solid var(--gb-orange) !important;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
+        }
 
         /* Kartu bergaya blok 3D (bayangan keras seperti sisi biru pada logo) */
         .gb-card {
@@ -171,33 +183,75 @@
         }
 
         :focus-visible { outline: 3px solid var(--gb-orange); outline-offset: 2px; }
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
+        /* HP & tablet kecil: font input minimal 16px agar iOS tidak auto-zoom saat fokus */
+        @media (max-width: 767px) {
+            input, select, textarea { font-size: 16px !important; }
+
+            /* Balon tooltip: jangan keluar layar. Grid -> rata kiri, Acak -> rata kanan */
+            #gridTooltip { left: 0 !important; right: auto !important; }
+            #gridTooltip .tooltip-triangle { left: 16px; transform: rotate(45deg); }
+            #reshuffleTooltip { left: auto !important; right: 0 !important; }
+            #reshuffleTooltip .tooltip-triangle { left: auto; right: 16px; transform: rotate(45deg); }
+        }
+
+        /* HP: bayangan blok lebih tipis supaya tidak menyempitkan konten */
+        @media (max-width: 640px) {
+            .gb-card, .dark .gb-card { box-shadow: 4px 4px 0 0 var(--gb-blue); border-width: 2px !important; }
+            .gb-hero { box-shadow: 5px 5px 0 0 var(--gb-orange); }
+            .gb-btn-primary { box-shadow: 3px 3px 0 0 var(--gb-blue); }
+            header.gb-header { border-bottom-width: 3px !important; box-shadow: 0 3px 0 0 var(--gb-blue); }
+            footer.gb-footer { border-top-width: 3px !important; }
+            #actionBar { border-top-width: 3px !important; }
+        }
+
+        /* HP landscape (tinggi layar pendek): lightbox dibuat kompak */
+        @media (max-height: 500px) and (orientation: landscape) {
+            #lightboxImgWrapper { padding-bottom: 4.5rem !important; }
+            #lightboxControls {
+                flex-direction: row !important;
+                align-items: flex-end !important;
+                max-width: none !important;
+                width: calc(100% - 2rem) !important;
+                bottom: .75rem !important;
+            }
+            #lightboxControls > p { display: none !important; }
+            #lightboxControls button { width: auto !important; flex-shrink: 0; padding: .5rem 1rem !important; }
+            #lightboxNote { height: 44px; resize: none; }
+            #zoomControls { top: 4rem; flex-direction: row; right: .75rem; }
+            #tutorialContent { max-height: 94vh !important; }
+        }
     </style>
 
     <script src="pengaturan.js"></script>
 </head>
-<body class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 pb-32 flex flex-col min-h-screen">
+<body class="text-slate-800 dark:text-slate-200 bg-slate-50 dark:bg-slate-900 pb-48 md:pb-40 flex flex-col min-h-screen">
 
     <!-- Blackout Overlay: muncul saat window kehilangan fokus (mis. Snipping Tool) -->
     <div id="protectionBlackout" class="hidden"></div>
 
     <header class="gb-header bg-white dark:bg-slate-800 sticky top-0 z-40 transition-colors duration-300">
-        <div class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="h-12 w-auto drop-shadow-md" draggable="false">
-                <div class="hidden sm:block">
-                    <h1 class="text-xl leading-tight text-slate-800 dark:text-white" id="headerVendorName">Gas Baee</h1>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-bold" data-i18n="subtitle">Creative Production Cirebon</p>
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
+            <div class="flex items-center gap-3 min-w-0">
+                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="h-10 sm:h-12 w-auto shrink-0 drop-shadow-md" draggable="false">
+                <div class="hidden sm:block min-w-0">
+                    <h1 class="text-xl leading-tight text-slate-800 dark:text-white truncate" id="headerVendorName">Gas Baee</h1>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-bold truncate" data-i18n="subtitle">Creative Production Cirebon</p>
                 </div>
             </div>
 
-            <div class="flex items-center gap-2">
-                <button onclick="showTutorial(true)" class="gb-press flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500" title="Panduan">
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="showTutorial(true)" class="gb-press flex items-center justify-center w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500" title="Panduan">
                     <i class="fa-solid fa-circle-question text-blue-600 dark:text-blue-400"></i> <span class="hidden md:inline ml-1 font-extrabold" data-i18n="btnGuide">Panduan</span>
                 </button>
-                <button onclick="toggleDarkMode()" id="darkModeBtn" class="gb-press flex items-center justify-center w-9 h-9 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
+                <button onclick="toggleDarkMode()" id="darkModeBtn" class="gb-press flex items-center justify-center w-10 h-10 md:w-9 md:h-9 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
                     <i class="fa-solid fa-moon text-slate-600 dark:text-slate-300"></i>
                 </button>
-                <button onclick="toggleLanguage()" class="gb-press flex items-center justify-center w-9 h-9 md:w-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-extrabold rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
+                <button onclick="toggleLanguage()" class="gb-press flex items-center justify-center w-10 h-10 md:w-auto md:h-auto md:px-3 md:py-1.5 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200 font-extrabold rounded-lg text-sm transition border-2 border-slate-800 dark:border-slate-500">
                     <i class="fa-solid fa-globe text-blue-600 dark:text-blue-400"></i> <span id="langDisplay" class="hidden md:inline ml-1">EN</span>
                 </button>
             </div>
@@ -206,33 +260,33 @@
 
     <main id="clientView" class="flex-grow w-full">
 
-        <div id="greetingSection" class="hidden max-w-6xl w-full mx-auto px-4 pt-8">
-            <div class="gb-hero rounded-3xl p-6 md:p-8 text-white relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+        <div id="greetingSection" class="hidden max-w-6xl w-full mx-auto px-4 pt-6 md:pt-8">
+            <div class="gb-hero rounded-3xl p-5 pb-24 sm:p-6 md:p-8 text-white relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6">
                 <img src="logo-gasbae-outline.png" alt="" aria-hidden="true" draggable="false"
-                     class="logo-slam absolute -right-6 -bottom-8 w-40 md:w-60 pointer-events-none select-none opacity-95">
+                     class="logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
 
-                <div class="relative z-10 max-w-xl">
-                    <h2 class="text-3xl md:text-5xl mb-2"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
+                <div class="relative z-10 max-w-xl min-w-0">
+                    <h2 class="text-2xl sm:text-3xl md:text-5xl mb-2 break-words"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
                     <p class="text-slate-100 text-sm md:text-base leading-relaxed font-semibold" data-i18n="welcomeDesc">Selamat datang di portal seleksi foto dari {vendor}.</p>
                 </div>
 
-                <div id="greetingQuotaInfo" class="hidden relative z-10 bg-slate-900/70 border-2 border-blue-400 px-5 py-3 rounded-2xl items-center gap-4 mr-0 md:mr-40">
-                    <div class="w-12 h-12 rounded-xl bg-blue-500 flex items-center justify-center text-slate-900 text-lg">
+                <div id="greetingQuotaInfo" class="hidden relative z-10 bg-slate-900/70 border-2 border-blue-400 px-4 sm:px-5 py-3 rounded-2xl items-center gap-3 sm:gap-4 mr-0 md:mr-40">
+                    <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-blue-500 flex items-center justify-center text-slate-900 text-lg shrink-0">
                         <i class="fa-solid fa-images"></i>
                     </div>
                     <div>
                         <p class="text-xs text-blue-300 font-bold" data-i18n="quotaTitle">Kuota Paket</p>
-                        <p class="text-sm font-bold"><span id="greetingQuotaLimit" class="text-3xl font-display text-white">0</span> <span class="text-slate-200" data-i18n="quotaMax">Foto Maksimal</span></p>
+                        <p class="text-sm font-bold"><span id="greetingQuotaLimit" class="text-2xl sm:text-3xl font-display text-white">0</span> <span class="text-slate-200" data-i18n="quotaMax">Foto Maksimal</span></p>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div class="max-w-6xl mx-auto px-4 py-8 w-full">
-            <div id="inputSection" class="gb-card bg-white dark:bg-slate-800 rounded-2xl p-8 mb-8 max-w-2xl mx-auto text-center relative overflow-hidden hidden transition-colors duration-300">
-                <img src="logo-gasbae.png" alt="Gas Baee" class="h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
-                <h2 class="text-2xl mb-2 text-slate-800 dark:text-white" data-i18n="manualTitle">Akses Manual Galeri</h2>
-                <p class="text-slate-500 dark:text-slate-400 text-sm mb-8 font-semibold" data-i18n="manualDesc">Silakan tempel (paste) link folder Google Drive Anda di bawah ini.</p>
+        <div class="max-w-6xl mx-auto px-4 py-6 md:py-8 w-full">
+            <div id="inputSection" class="gb-card bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-8 mb-8 max-w-2xl mx-auto text-center relative overflow-hidden hidden transition-colors duration-300">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="h-20 sm:h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
+                <h2 class="text-xl sm:text-2xl mb-2 text-slate-800 dark:text-white" data-i18n="manualTitle">Akses Manual Galeri</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 sm:mb-8 font-semibold" data-i18n="manualDesc">Silakan tempel (paste) link folder Google Drive Anda di bawah ini.</p>
                 <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <i class="fa-brands fa-google-drive text-slate-400 text-lg"></i>
@@ -241,8 +295,8 @@
                         class="w-full pl-12 pr-4 py-3.5 bg-slate-50 dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-600 text-slate-800 dark:text-white rounded-xl focus:ring-4 focus:ring-blue-500/50 outline-none transition font-semibold"
                         placeholder="Link Google Drive...">
                 </div>
-                <div class="mt-6 flex justify-center">
-                    <button onclick="loadFromDrive()" class="gb-btn-primary gb-press px-8 py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-lg">
+                <div class="mt-5 sm:mt-6 flex justify-center">
+                    <button onclick="loadFromDrive()" class="gb-btn-primary gb-press w-full sm:w-auto px-8 py-3.5 rounded-xl transition flex items-center justify-center gap-2 text-lg">
                         <i class="fa-solid fa-folder-open"></i> <span data-i18n="btnOpen">Buka Galeri</span>
                     </button>
                 </div>
@@ -250,17 +304,17 @@
 
             <div id="loadingState" class="hidden flex-col items-center justify-center py-16">
                 <i class="fa-solid fa-circle-notch fa-spin text-5xl text-blue-500 mb-4"></i>
-                <p id="loadingText" class="text-slate-500 dark:text-slate-400 font-bold mt-3" data-i18n="loading">Menarik data dari Google Drive...</p>
+                <p id="loadingText" class="text-slate-500 dark:text-slate-400 font-bold mt-3 text-center" data-i18n="loading">Menarik data dari Google Drive...</p>
             </div>
 
             <div id="galleryContainer" class="hidden">
-                <div id="folderNavContainer" class="gb-card hidden mb-6 bg-white dark:bg-slate-800 rounded-2xl p-5">
-                    <div class="flex items-center justify-between mb-4 border-b-2 border-slate-200 dark:border-slate-700 pb-3">
-                        <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center">
+                <div id="folderNavContainer" class="gb-card hidden mb-6 bg-white dark:bg-slate-800 rounded-2xl p-4 sm:p-5">
+                    <div class="flex items-center justify-between gap-2 mb-4 border-b-2 border-slate-200 dark:border-slate-700 pb-3">
+                        <h4 class="font-bold text-slate-700 dark:text-slate-200 text-sm flex items-center min-w-0">
                             <i class="fa-solid fa-folder-tree mr-2 text-blue-500"></i>
-                            <span data-i18n="folderTitle">Sub-Folder Tersedia</span>
+                            <span class="truncate" data-i18n="folderTitle">Sub-Folder Tersedia</span>
                         </h4>
-                        <button id="btnBackFolder" onclick="navigateBackFolder()" class="gb-press hidden text-xs font-extrabold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-1.5 rounded-lg border-2 border-slate-800 dark:border-slate-500 hover:bg-blue-100 hover:text-blue-700 transition flex items-center">
+                        <button id="btnBackFolder" onclick="navigateBackFolder()" class="gb-press hidden shrink-0 text-xs font-extrabold bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 px-3 py-2 rounded-lg border-2 border-slate-800 dark:border-slate-500 hover:bg-blue-100 hover:text-blue-700 transition flex items-center">
                             <i class="fa-solid fa-arrow-left mr-1.5"></i> <span data-i18n="btnBackFolder">Kembali</span>
                         </button>
                     </div>
@@ -268,17 +322,17 @@
                 </div>
 
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-6 gap-4 border-b-4 border-slate-800 dark:border-blue-500 pb-4">
-                    <div>
-                        <h3 class="text-3xl text-slate-800 dark:text-white flex items-center gap-2">
-                            <span id="currentFolderDisplay" data-i18n="galleryTitle">Koleksi Foto</span>
+                    <div class="min-w-0 w-full md:w-auto">
+                        <h3 class="text-2xl sm:text-3xl text-slate-800 dark:text-white flex items-center gap-2">
+                            <span id="currentFolderDisplay" class="break-words min-w-0" data-i18n="galleryTitle">Koleksi Foto</span>
                         </h3>
                         <p class="text-sm text-slate-500 dark:text-slate-400 mt-1 font-semibold" data-i18n="galleryDesc">Klik gambar untuk memilih. Klik ikon 🔍 untuk perbesar & tambah catatan.</p>
                     </div>
-                    <div class="flex flex-wrap items-center gap-2">
+                    <div class="flex flex-wrap items-center gap-2 w-full md:w-auto">
 
                         <!-- TOMBOL GRID DENGAN ANIMASI BALON TOOLTIP -->
                         <div class="relative">
-                            <button onclick="hideTooltip('gridTooltip'); toggleGridSize()" class="gb-press text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-bold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Ubah Ukuran Grid">
+                            <button onclick="hideTooltip('gridTooltip'); toggleGridSize()" class="gb-press h-10 md:h-auto text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-bold cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition" title="Ubah Ukuran Grid">
                                 <i class="fa-solid fa-table-cells-large"></i>
                             </button>
                             <div id="gridTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-extrabold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
@@ -288,11 +342,11 @@
                         </div>
 
                         <!-- DROPDOWN URUTAN -->
-                        <div class="relative">
+                        <div class="relative flex-1 min-w-[8.5rem] md:flex-none">
                             <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                                 <i class="fa-solid fa-arrow-down-a-z text-slate-400 text-sm"></i>
                             </div>
-                            <select id="sortDropdown" onchange="applySort(this.value)" class="text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 pl-9 pr-8 rounded-lg font-bold cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/50 appearance-none transition">
+                            <select id="sortDropdown" onchange="applySort(this.value)" class="w-full h-10 md:h-auto text-sm bg-white dark:bg-slate-800 border-2 border-slate-800 dark:border-slate-500 text-slate-700 dark:text-slate-200 py-2 pl-9 pr-8 rounded-lg font-bold cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/50 appearance-none transition">
                                 <option value="default" data-i18n="sortDefault">Urutan Asli</option>
                                 <option value="asc">A - Z</option>
                                 <option value="desc">Z - A</option>
@@ -305,7 +359,7 @@
 
                         <!-- TOMBOL ACAK LAGI DENGAN ANIMASI BALON TOOLTIP -->
                         <div class="relative">
-                            <button id="btnReshuffle" onclick="hideTooltip('reshuffleTooltip'); applySort('random')" class="gb-press hidden text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-extrabold transition hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-slate-800 dark:border-slate-500">
+                            <button id="btnReshuffle" onclick="hideTooltip('reshuffleTooltip'); applySort('random')" class="gb-press hidden h-10 md:h-auto text-sm bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 py-2 px-3 rounded-lg font-extrabold transition hover:bg-slate-200 dark:hover:bg-slate-600 border-2 border-slate-800 dark:border-slate-500">
                                 <i class="fa-solid fa-dice"></i> <span class="hidden sm:inline ml-1" data-i18n="btnReshuffle">Acak Lagi</span>
                             </button>
                             <div id="reshuffleTooltip" class="hidden opacity-0 absolute -top-12 left-1/2 -translate-x-1/2 bg-blue-600 text-white text-xs font-extrabold py-1.5 px-3 rounded-lg animate-bounce shadow-lg pointer-events-none whitespace-nowrap z-50 transition-all duration-300">
@@ -314,19 +368,19 @@
                             </div>
                         </div>
 
-                        <button onclick="toggleViewMode()" id="viewModeBtn" class="text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-medium transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border border-transparent dark:border-slate-600">
+                        <button onclick="toggleViewMode()" id="viewModeBtn" class="w-full sm:w-auto justify-center text-sm bg-slate-800 dark:bg-slate-700 text-white py-2.5 px-4 rounded-lg font-medium transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border border-transparent dark:border-slate-600">
                             <i class="fa-solid fa-filter"></i> <span id="btnViewText">Lihat Pilihan</span> (0)
                         </button>
                     </div>
                 </div>
 
                 <div id="photoGrid" class="mb-8 transition-all duration-300"></div>
-                <div id="paginationContainer" class="flex justify-center items-center gap-3 mt-10 pb-8 hidden"></div>
+                <div id="paginationContainer" class="flex flex-wrap justify-center items-center gap-2 sm:gap-3 mt-10 pb-8 hidden"></div>
             </div>
         </div>
     </main>
 
-    <footer id="clientFooter" class="gb-footer text-center py-6 mt-auto bg-white dark:bg-slate-900 transition-colors">
+    <footer id="clientFooter" class="gb-footer text-center py-6 px-4 mt-auto bg-white dark:bg-slate-900 transition-colors">
         <img src="logo-gasbae.png" alt="Gas Baee" class="h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
         <p class="text-sm text-slate-500 dark:text-slate-400 font-bold">&copy; <script>document.write(new Date().getFullYear())</script> APA BAE, <span id="footerVendorName" class="font-display text-base text-blue-600 dark:text-blue-400">GAS BAE!</span></p>
     </footer>
@@ -341,59 +395,59 @@
                 <div id="quotaBar" class="bg-blue-600 h-full rounded-full transition-all duration-500 ease-out" style="width: 0%"></div>
             </div>
         </div>
-        <div class="max-w-6xl mx-auto px-4 py-4 flex items-center justify-between">
-            <div class="flex items-center gap-4">
-                <div class="font-display bg-blue-500 text-slate-900 w-12 h-12 rounded-full flex items-center justify-center text-xl border-[3px] border-slate-900 dark:border-slate-50 shrink-0" id="selectedCount">0</div>
-                <div class="hidden sm:block">
-                    <p class="text-lg leading-tight font-display text-slate-800 dark:text-white" data-i18n="selFooterTitle">Foto Terpilih</p>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold" data-i18n="selFooterDesc">Kirim daftar ini ke tim kami</p>
+        <div class="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+            <div class="flex items-center gap-3 sm:gap-4 min-w-0">
+                <div class="font-display bg-blue-500 text-slate-900 w-11 h-11 sm:w-12 sm:h-12 rounded-full flex items-center justify-center text-lg sm:text-xl border-[3px] border-slate-900 dark:border-slate-50 shrink-0" id="selectedCount">0</div>
+                <div class="hidden sm:block min-w-0">
+                    <p class="text-lg leading-tight font-display text-slate-800 dark:text-white truncate" data-i18n="selFooterTitle">Foto Terpilih</p>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 font-semibold truncate" data-i18n="selFooterDesc">Kirim daftar ini ke tim kami</p>
                 </div>
             </div>
-            <div class="flex items-center gap-2">
-                <button onclick="downloadList()" class="gb-press px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-800 dark:border-slate-500" title="Download file .txt">
+            <div class="flex items-center gap-2 shrink-0">
+                <button onclick="downloadList()" class="gb-press px-3 sm:px-4 py-3 bg-slate-100 dark:bg-slate-700 hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-700 dark:text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-800 dark:border-slate-500" title="Download file .txt">
                     <i class="fa-solid fa-file-arrow-down text-lg"></i> <span class="hidden md:inline" data-i18n="btnDownload">Download List</span>
                 </button>
-                <button onclick="copyToClipboard()" class="gb-press px-5 md:px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-900 dark:border-slate-50" style="box-shadow: 4px 4px 0 0 var(--gb-blue);">
+                <button onclick="copyToClipboard()" class="gb-press px-4 sm:px-5 md:px-6 py-3 bg-green-600 hover:bg-green-700 text-white font-extrabold rounded-xl transition flex items-center gap-2 border-2 border-slate-900 dark:border-slate-50" style="box-shadow: 4px 4px 0 0 var(--gb-blue);">
                     <i class="fa-brands fa-whatsapp text-xl"></i> <span class="hidden md:inline" data-i18n="btnWA">Kirim WA</span><span class="md:hidden" data-i18n="btnWA">Kirim WA</span>
                 </button>
             </div>
         </div>
     </div>
 
-    <div id="customAlert" class="fixed top-4 left-1/2 -translate-x-1/2 bg-slate-900 border-2 border-blue-500 text-white px-6 py-4 rounded-xl shadow-2xl z-[99] flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0 min-w-[300px] justify-center">
-        <i id="alertIcon" class="fa-solid fa-circle-check text-green-400 text-lg"></i>
+    <div id="customAlert" class="fixed left-1/2 -translate-x-1/2 bg-slate-900 border-2 border-blue-500 text-white px-5 sm:px-6 py-3 sm:py-4 rounded-xl shadow-2xl z-[99] flex items-center gap-3 transition-all duration-300 transform -translate-y-32 opacity-0 min-w-[260px] max-w-[92vw] justify-center" style="top: calc(env(safe-area-inset-top, 0px) + 1rem);">
+        <i id="alertIcon" class="fa-solid fa-circle-check text-green-400 text-lg shrink-0"></i>
         <span id="alertText" class="text-sm font-bold tracking-wide">Notifikasi</span>
     </div>
 
     <div id="tutorialModal" class="fixed inset-0 bg-slate-900/80 backdrop-blur-sm z-[100] hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300 px-4">
-        <div class="gb-card bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full p-8 transform scale-95 transition-transform duration-300 relative" id="tutorialContent">
-            <div class="absolute top-4 right-4">
-                <button onclick="closeTutorial()" class="text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl"><i class="fa-solid fa-xmark"></i></button>
+        <div class="gb-card bg-white dark:bg-slate-800 rounded-3xl max-w-md w-full max-h-[90vh] overflow-y-auto p-5 sm:p-8 transform scale-95 transition-transform duration-300 relative" id="tutorialContent">
+            <div class="absolute top-3 right-3 sm:top-4 sm:right-4">
+                <button onclick="closeTutorial()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="text-center mb-6 mt-2">
-                <img src="logo-gasbae.png" alt="Gas Baee" class="h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
-                <h3 class="text-3xl text-slate-800 dark:text-white" data-i18n="tutTitle">Cara Memilih Foto</h3>
+            <div class="text-center mb-5 sm:mb-6 mt-2">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="h-16 sm:h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
+                <h3 class="text-2xl sm:text-3xl text-slate-800 dark:text-white" data-i18n="tutTitle">Cara Memilih Foto</h3>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 font-semibold" data-i18n="tutDesc">Ikuti panduan mudah ini untuk menyeleksi foto favorit Anda:</p>
             </div>
-            <ul class="space-y-4 mb-8">
-                <li class="flex items-start gap-4">
+            <ul class="space-y-4 mb-6 sm:mb-8">
+                <li class="flex items-start gap-3 sm:gap-4">
                     <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">1</div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut1"><strong>Pilih Foto:</strong> Klik (tap) langsung pada gambar foto untuk memilihnya.</p>
                 </li>
-                <li class="flex items-start gap-4">
+                <li class="flex items-start gap-3 sm:gap-4">
                     <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">2</div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut2"><strong>Zoom & Catatan:</strong> Klik ikon <i class="fa-solid fa-magnifying-glass-plus text-slate-800 dark:text-white mx-1"></i> untuk memperbesar gambar & tambah instruksi edit.</p>
                 </li>
-                <li class="flex items-start gap-4">
+                <li class="flex items-start gap-3 sm:gap-4">
                     <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">3</div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut4"><strong>Tampilan & Urutan:</strong> Klik ikon <i class="fa-solid fa-table-cells-large text-slate-800 dark:text-white mx-1"></i> untuk mengubah jumlah baris grid foto. Gunakan dropdown untuk melihat foto dalam <em>'Urutan Asli'</em> (berdasarkan jam foto) atau <em>'Acak'</em>. Klik tombol <em>'Lihat Pilihan'</em> untuk meninjau foto yang sudah dipilih.</p>
                 </li>
-                <li class="flex items-start gap-4">
+                <li class="flex items-start gap-3 sm:gap-4">
                     <div class="font-display bg-blue-500 text-slate-900 w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 border-slate-900 dark:border-slate-50">4</div>
                     <p class="text-sm text-slate-600 dark:text-slate-300 pt-1 font-semibold" data-i18n="tut3"><strong>Kirim List:</strong> Jika sudah selesai, klik tombol Kirim WA atau Download di bagian bawah layar.</p>
                 </li>
             </ul>
-            <button onclick="closeTutorial()" class="gb-btn-primary gb-press w-full py-4 rounded-xl transition text-lg" data-i18n="btnTut">
+            <button onclick="closeTutorial()" class="gb-btn-primary gb-press w-full py-3.5 sm:py-4 rounded-xl transition text-lg" data-i18n="btnTut">
                 Mengerti, Mulai Memilih!
             </button>
         </div>
@@ -401,9 +455,9 @@
 
     <!-- LIGHTBOX ZOOM -->
     <div id="lightbox" class="fixed inset-0 bg-slate-950/95 z-[60] hidden flex-col justify-center items-center opacity-0 transition-opacity duration-300 backdrop-blur-sm touch-pan-y">
-        <div class="absolute top-0 left-0 w-full p-4 flex justify-between items-center z-50 bg-gradient-to-b from-black/80 to-transparent">
-            <p id="lightboxTitle" class="text-white font-bold drop-shadow-md text-sm md:text-base ml-2">Photo Name</p>
-            <button onclick="closeLightbox()" class="text-white hover:text-blue-400 w-10 h-10 flex items-center justify-center text-2xl bg-black/50 hover:bg-white/20 rounded-full transition"><i class="fa-solid fa-xmark"></i></button>
+        <div class="absolute top-0 left-0 w-full p-3 sm:p-4 flex justify-between items-center gap-3 z-50 bg-gradient-to-b from-black/80 to-transparent" style="padding-top: calc(env(safe-area-inset-top, 0px) + .75rem);">
+            <p id="lightboxTitle" class="text-white font-bold drop-shadow-md text-sm md:text-base ml-2 truncate min-w-0">Photo Name</p>
+            <button onclick="closeLightbox()" class="text-white hover:text-blue-400 w-10 h-10 shrink-0 flex items-center justify-center text-2xl bg-black/50 hover:bg-white/20 rounded-full transition" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
         </div>
         <button onclick="prevPhoto(event)" class="absolute left-2 md:left-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-left"></i></button>
         <button onclick="nextPhoto(event)" class="absolute right-2 md:right-6 top-1/2 -translate-y-1/2 w-10 h-10 md:w-14 md:h-14 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-xl md:text-2xl z-50 transition hidden md:flex"><i class="fa-solid fa-chevron-right"></i></button>
@@ -412,11 +466,11 @@
             <button onclick="zoomOutImage()" title="Perkecil" class="w-10 h-10 bg-black/50 hover:bg-blue-600 text-white rounded-full flex items-center justify-center text-base shadow-lg transition"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
             <button id="zoomResetBtn" onclick="resetZoomImage()" title="Tutup Zoom" class="hidden w-10 h-10 bg-black/50 hover:bg-red-600 text-white rounded-full flex items-center justify-center text-base shadow-lg transition"><i class="fa-solid fa-xmark"></i></button>
         </div>
-        <div class="relative w-full h-full flex items-center justify-center p-2 pb-32 md:pb-24 pointer-events-none overflow-hidden" id="lightboxImgWrapper">
+        <div class="relative w-full h-full flex items-center justify-center p-2 pt-16 pb-52 md:pt-2 md:pb-44 pointer-events-none overflow-hidden" id="lightboxImgWrapper">
             <img id="lightboxImg" src="" draggable="false" class="max-w-full max-h-full object-contain rounded-md shadow-2xl transition-all duration-200 ease-in-out pointer-events-auto select-none opacity-100 transform scale-100">
             <div id="lightboxWatermark" class="watermark-layer hidden absolute inset-0 z-20 pointer-events-none"></div>
         </div>
-        <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-11/12 max-w-md z-50">
+        <div id="lightboxControls" class="absolute left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 w-11/12 max-w-md z-50" style="bottom: calc(env(safe-area-inset-bottom, 0px) + 1.5rem);">
             <p class="text-white/60 text-xs md:hidden text-center mb-[-5px] animate-pulse"><i class="fa-solid fa-arrows-left-right"></i> <span data-i18n="swipe">Geser kiri/kanan</span></p>
             <button id="lightboxSelectBtn" onclick="toggleLightboxSelect()" class="px-6 py-3 bg-slate-800 hover:bg-slate-700 text-white font-bold rounded-xl transition flex items-center justify-center shadow-lg border border-slate-600 w-full sm:w-auto">
                 <i class="fa-regular fa-square-check mr-2"></i> <span id="btnSelectText">Pilih Foto Ini</span>
@@ -774,6 +828,7 @@
             const content = document.getElementById('tutorialContent');
             modal.classList.remove('hidden');
             modal.classList.add('flex');
+            content.scrollTop = 0;
             setTimeout(() => {
                 modal.classList.replace('opacity-0', 'opacity-100');
                 content.classList.replace('scale-95', 'scale-100');
@@ -842,7 +897,7 @@
             const alertText = document.getElementById('alertText');
             const alertIcon = document.getElementById('alertIcon');
             alertText.textContent = message;
-            alertIcon.className = type === 'success' ? "fa-solid fa-circle-check text-green-400 text-lg" : "fa-solid fa-triangle-exclamation text-red-400 text-lg";
+            alertIcon.className = type === 'success' ? "fa-solid fa-circle-check text-green-400 text-lg shrink-0" : "fa-solid fa-triangle-exclamation text-red-400 text-lg shrink-0";
             alertBox.classList.remove('-translate-y-32', 'opacity-0');
             setTimeout(() => alertBox.classList.add('-translate-y-32', 'opacity-0'), 3000);
         }
@@ -953,8 +1008,8 @@
 
             appState.folders.forEach(folder => {
                 const btn = document.createElement('button');
-                btn.className = "gb-press flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-600 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition text-left group";
-                btn.innerHTML = `<i class="fa-solid fa-folder text-blue-500 transition text-2xl"></i> <span class="font-bold text-xs md:text-sm text-slate-700 dark:text-slate-200 w-full line-clamp-2">${folder.name}</span>`;
+                btn.className = "gb-press flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-900 border-2 border-slate-800 dark:border-slate-600 rounded-xl hover:border-blue-500 dark:hover:border-blue-400 hover:bg-blue-50 dark:hover:bg-slate-800 transition text-left group min-w-0";
+                btn.innerHTML = `<i class="fa-solid fa-folder text-blue-500 transition text-2xl shrink-0"></i> <span class="font-bold text-xs md:text-sm text-slate-700 dark:text-slate-200 w-full line-clamp-2 break-words">${folder.name}</span>`;
                 btn.onclick = () => { loadFromDrive(folder.id, folder.name, false); };
                 grid.appendChild(btn);
             });
@@ -1012,10 +1067,10 @@
             const langData = TRANSLATIONS[appState.lang];
             if (appState.viewMode === 'all') {
                 btn.innerHTML = `<i class="fa-solid fa-filter"></i> <span id="btnViewText">${langData.btnViewSel}</span> (${appState.selectedMap.size})`;
-                btn.className = "gb-press text-sm bg-slate-800 dark:bg-slate-700 text-white py-2 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border-2 border-slate-900 dark:border-slate-500";
+                btn.className = "gb-press w-full sm:w-auto justify-center text-sm bg-slate-800 dark:bg-slate-700 text-white py-2.5 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-slate-700 dark:hover:bg-slate-600 border-2 border-slate-900 dark:border-slate-500";
             } else {
                 btn.innerHTML = `<i class="fa-solid fa-border-all"></i> <span id="btnViewText">${langData.btnViewAll}</span>`;
-                btn.className = "gb-press text-sm bg-blue-500 text-slate-900 py-2 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-blue-400 border-2 border-slate-900";
+                btn.className = "gb-press w-full sm:w-auto justify-center text-sm bg-blue-500 text-slate-900 py-2.5 px-4 rounded-lg font-extrabold transition flex items-center gap-2 hover:bg-blue-400 border-2 border-slate-900";
             }
         }
 
@@ -1049,7 +1104,7 @@
 
             if (appState.gridMode === 2) {
                 gridClasses = 'grid-cols-2 md:grid-cols-3 lg:grid-cols-4';
-                gapClass = 'gap-4 md:gap-6';
+                gapClass = 'gap-3 sm:gap-4 md:gap-6';
             } else if (appState.gridMode === 4) {
                 gridClasses = 'grid-cols-4 md:grid-cols-5 lg:grid-cols-6';
                 gapClass = 'gap-2 md:gap-4';
@@ -1112,18 +1167,20 @@
                 }
 
                 const bottomArea = document.createElement('div');
-                const bottomPad = isSmallGrid ? 'p-1.5 pt-4' : 'p-3 pt-8';
+                const bottomPad = isSmallGrid ? 'p-1.5 pt-4' : 'p-2 pt-8 sm:p-3 sm:pt-8';
                 const textSize = isSmallGrid ? 'text-[9px]' : 'text-xs';
                 const btnSize = isSmallGrid ? 'w-5 h-5 text-[10px] rounded' : 'w-8 h-8 rounded-lg';
 
                 bottomArea.className = `absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent ${bottomPad} flex justify-between items-end z-20`;
 
+                // Grid kecil di HP: sembunyikan nama file agar tidak berdesakan dengan tombol zoom
                 const nameText = document.createElement('p');
-                nameText.className = `text-white ${textSize} font-bold truncate drop-shadow-md w-3/4`;
+                nameText.className = `text-white ${textSize} font-bold truncate drop-shadow-md w-3/4 ${isSmallGrid ? 'hidden sm:block' : ''}`;
                 nameText.textContent = photo.name;
 
                 const zoomBtn = document.createElement('button');
-                zoomBtn.className = `text-white bg-black/40 hover:bg-blue-500 hover:text-slate-900 ${btnSize} flex items-center justify-center shadow-lg transition-colors`;
+                zoomBtn.className = `text-white bg-black/40 hover:bg-blue-500 hover:text-slate-900 ${btnSize} ml-auto shrink-0 flex items-center justify-center shadow-lg transition-colors`;
+                zoomBtn.setAttribute('aria-label', 'Zoom');
                 zoomBtn.innerHTML = '<i class="fa-solid fa-magnifying-glass-plus"></i>';
 
                 const targetIndex = appState.viewMode === 'selected' ? index : globalIndex;
@@ -1165,19 +1222,19 @@
             container.classList.remove('hidden'); container.innerHTML = '';
 
             const prevBtn = document.createElement('button');
-            prevBtn.className = `px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === 1 ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
+            prevBtn.className = `px-3 sm:px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === 1 ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
             prevBtn.innerHTML = '<i class="fa-solid fa-chevron-left"></i> Prev';
             prevBtn.disabled = appState.currentPage === 1;
             prevBtn.onclick = () => changePage(appState.currentPage - 1);
             container.appendChild(prevBtn);
 
             const indicator = document.createElement('span');
-            indicator.className = 'font-display px-5 py-2.5 text-base text-slate-900 bg-blue-500 rounded-xl border-2 border-slate-900';
+            indicator.className = 'font-display px-4 sm:px-5 py-2.5 text-base text-slate-900 bg-blue-500 rounded-xl border-2 border-slate-900';
             indicator.textContent = `${appState.currentPage} / ${totalPages}`;
             container.appendChild(indicator);
 
             const nextBtn = document.createElement('button');
-            nextBtn.className = `px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === totalPages ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
+            nextBtn.className = `px-3 sm:px-5 py-2.5 rounded-xl font-extrabold transition flex items-center gap-2 border-2 ${appState.currentPage === totalPages ? 'bg-slate-50 dark:bg-slate-800 text-slate-300 dark:text-slate-600 cursor-not-allowed border-slate-200 dark:border-slate-700' : 'gb-press bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-blue-50 dark:hover:bg-slate-600 border-slate-800 dark:border-slate-500'}`;
             nextBtn.innerHTML = 'Next <i class="fa-solid fa-chevron-right"></i>';
             nextBtn.disabled = appState.currentPage === totalPages;
             nextBtn.onclick = () => changePage(appState.currentPage + 1);
