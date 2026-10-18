@@ -220,6 +220,11 @@
             background-image: linear-gradient(180deg, rgba(255, 255, 255, 0.05), transparent 40%);
         }
 
+        /* Logo ikut tema: siang = outline (.logo-light), malam = polos (.logo-dark) */
+        .logo-dark { display: none !important; }
+        .dark .logo-dark { display: block !important; }
+        .dark .logo-light { display: none !important; }
+
         /* Ikon matahari/bulan: muncul sambil berputar */
         @keyframes themePop {
             from { transform: rotate(-90deg) scale(.4); opacity: 0; }
@@ -284,8 +289,8 @@
     <header class="gb-header bg-white dark:bg-slate-800 sticky top-0 z-40 transition-colors duration-300">
         <div class="max-w-6xl mx-auto px-3 sm:px-4 py-2 sm:py-3 flex justify-between items-center gap-2">
             <div class="flex items-center gap-3 min-w-0">
-                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="dark:hidden h-10 sm:h-12 w-auto shrink-0 drop-shadow-md" draggable="false">
-                <img src="logo-gasbae.png" alt="Gas Baee" class="hidden dark:block h-10 sm:h-12 w-auto shrink-0 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="logo-light h-10 sm:h-12 w-auto shrink-0 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="logo-dark h-10 sm:h-12 w-auto shrink-0 drop-shadow-md" draggable="false">
                 <div class="hidden sm:block min-w-0">
                     <h1 class="text-xl leading-tight text-slate-800 dark:text-white truncate" id="headerVendorName">Gas Baee</h1>
                     <p class="text-xs text-slate-500 dark:text-slate-400 font-bold truncate" data-i18n="subtitle">Creative Production Cirebon</p>
@@ -311,9 +316,9 @@
         <div id="greetingSection" class="hidden max-w-6xl w-full mx-auto px-4 pt-6 md:pt-8">
             <div class="gb-hero rounded-3xl p-5 pb-24 sm:p-6 md:p-8 text-white relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-5 md:gap-6">
                 <img src="logo-gasbae-outline.png" alt="" aria-hidden="true" draggable="false"
-                     class="dark:hidden logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
+                     class="logo-light logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
                 <img src="logo-gasbae.png" alt="" aria-hidden="true" draggable="false"
-                     class="hidden dark:block logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
+                     class="logo-dark logo-slam absolute -right-4 -bottom-5 w-28 sm:w-44 md:-right-6 md:-bottom-8 md:w-60 pointer-events-none select-none opacity-95">
 
                 <div class="relative z-10 max-w-xl min-w-0">
                     <h2 class="text-2xl sm:text-3xl md:text-5xl mb-2 break-words"><span data-i18n="welcomeTitle">Hallo</span>, <span id="displayClientName" class="text-blue-400 capitalize">Kakak</span> 👋</h2>
@@ -334,8 +339,8 @@
 
         <div class="max-w-6xl mx-auto px-4 py-6 md:py-8 w-full">
             <div id="inputSection" class="gb-card bg-white dark:bg-slate-800 rounded-2xl p-5 sm:p-8 mb-8 max-w-2xl mx-auto text-center relative overflow-hidden hidden transition-colors duration-300">
-                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="dark:hidden h-20 sm:h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
-                <img src="logo-gasbae.png" alt="Gas Baee" class="hidden dark:block h-20 sm:h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="logo-light h-20 sm:h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="logo-dark h-20 sm:h-24 w-auto mx-auto mb-4 drop-shadow-md" draggable="false">
                 <h2 class="text-xl sm:text-2xl mb-2 text-slate-800 dark:text-white" data-i18n="manualTitle">Akses Manual Galeri</h2>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mb-6 sm:mb-8 font-semibold" data-i18n="manualDesc">Silakan tempel (paste) link folder Google Drive Anda di bawah ini.</p>
                 <div class="relative">
@@ -432,8 +437,8 @@
     </main>
 
     <footer id="clientFooter" class="gb-footer text-center py-6 px-4 mt-auto bg-white dark:bg-slate-900 transition-colors">
-        <img src="logo-gasbae-outline.png" alt="Gas Baee" class="dark:hidden h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
-        <img src="logo-gasbae.png" alt="Gas Baee" class="hidden dark:block h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
+        <img src="logo-gasbae-outline.png" alt="Gas Baee" class="logo-light h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
+        <img src="logo-gasbae.png" alt="Gas Baee" class="logo-dark h-10 w-auto mx-auto mb-2 drop-shadow" draggable="false">
         <p class="text-sm text-slate-500 dark:text-slate-400 font-bold">&copy; <script>document.write(new Date().getFullYear())</script> APA BAE, <span id="footerVendorName" class="font-display text-base text-blue-600 dark:text-blue-400">GAS BAE!</span></p>
     </footer>
 
@@ -477,8 +482,8 @@
                 <button onclick="closeTutorial()" class="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-600 dark:hover:text-white text-xl" aria-label="Tutup"><i class="fa-solid fa-xmark"></i></button>
             </div>
             <div class="text-center mb-5 sm:mb-6 mt-2">
-                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="dark:hidden h-16 sm:h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
-                <img src="logo-gasbae.png" alt="Gas Baee" class="hidden dark:block h-16 sm:h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae-outline.png" alt="Gas Baee" class="logo-light h-16 sm:h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
+                <img src="logo-gasbae.png" alt="Gas Baee" class="logo-dark h-16 sm:h-20 w-auto mx-auto mb-3 drop-shadow-md" draggable="false">
                 <h3 class="text-2xl sm:text-3xl text-slate-800 dark:text-white" data-i18n="tutTitle">Cara Memilih Foto</h3>
                 <p class="text-slate-500 dark:text-slate-400 text-sm mt-2 font-semibold" data-i18n="tutDesc">Ikuti panduan mudah ini untuk menyeleksi foto favorit Anda:</p>
             </div>
