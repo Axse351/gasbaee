@@ -534,11 +534,25 @@
             return getTextWatermarkDataUri();
         }
 
+        // Lebar satu tile watermark (px).
+        // Desktop (>= 768px): ukuran asli 300px, tidak berubah.
+        // HP: tile dikecilkan mengikuti lebar kartu foto, jadi logo lebih kecil & jumlahnya lebih banyak.
+        // Ubah pembagi 2.2 (kartu) / 3.5 (lightbox) untuk mengatur kerapatan: makin kecil = makin besar & jarang.
+        function getWatermarkTileWidth(forLightbox = false) {
+            const vw = window.innerWidth;
+            if (vw >= 768) return 300;
+            if (forLightbox) return Math.max(90, Math.round(vw / 3.5));
+            const cols = appState.gridMode === 2 ? 2 : appState.gridMode === 4 ? 4 : 6;
+            const cardW = (vw - 32 - (cols - 1) * 8) / cols;
+            return Math.max(44, Math.round(cardW / 2.2));
+        }
+
         function createWatermarkLayer(extraClass = '') {
             const layer = document.createElement('div');
             layer.className = `watermark-layer absolute inset-0 z-20 pointer-events-none ${extraClass}`;
             layer.style.backgroundImage = getWatermarkDataUri();
             layer.style.backgroundRepeat = 'repeat';
+            layer.style.backgroundSize = `${getWatermarkTileWidth()}px auto`;
             return layer;
         }
 
@@ -1396,6 +1410,7 @@
                 if (appState.wmMode) {
                     wmEl.style.backgroundImage = getWatermarkDataUri();
                     wmEl.style.backgroundRepeat = 'repeat';
+                    wmEl.style.backgroundSize = `${getWatermarkTileWidth(true)}px auto`;
                     wmEl.classList.remove('hidden');
                 } else {
                     wmEl.classList.add('hidden');
