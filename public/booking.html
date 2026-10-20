@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+    <meta name="theme-color" content="#2B3EBF">
+    <title>Booking - Gas Baee</title>
+    <link rel="icon" href="favicon.png">
+    <script>tailwind = { config: { theme: { extend: { colors: { slate: { 50: '#FDF6E7', 100: '#FAEBD0', 200: '#EFD8B0', 400: '#9C93B8', 500: '#6D6797', 700: '#2E3490', 800: '#1F2670', 900: '#151A52' }, blue: { 100: '#FFE8BF', 200: '#FFD48A', 500: '#F4A027', 600: '#E5890F' } } } } } }</script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@400;600;800&display=swap');
+
+        body {
+            font-family: Nunito, sans-serif;
+            background: #FDF5E6 radial-gradient(rgba(43, 62, 191, .12) 1.5px, transparent 1.5px) 0 0/22px 22px
+        }
+
+        h1,
+        h2,
+        .fd {
+            font-family: 'Lilita One', sans-serif;
+            font-weight: 400
+        }
+
+        .card {
+            border: 3px solid #151A52;
+            box-shadow: 5px 5px 0 #2B3EBF
+        }
+
+        .btn {
+            background: #F4A027;
+            color: #151A52;
+            border: 3px solid #151A52;
+            box-shadow: 3px 3px 0 #2B3EBF;
+            font-family: 'Lilita One', sans-serif
+        }
+
+        .btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: none
+        }
+
+        .d {
+            aspect-ratio: 1;
+            border: 2px solid transparent
+        }
+
+        input,
+        select,
+        textarea {
+            font-size: 16px;
+            border: 2px solid #151A52
+        }
+    </style>
+    <script src="pengaturan.js"></script>
+</head>
+
+<body class="text-slate-800 min-h-screen p-4 py-6">
+    <div class="max-w-md mx-auto space-y-4">
+        <div class="flex items-center gap-3">
+            <img src="logo-gasbae-outline.png" alt="Gas Baee" class="h-12 w-auto">
+            <div>
+                <h1 class="text-2xl leading-tight">Booking Gas Baee</h1>
+                <p class="text-xs font-bold text-slate-500">Lihat jadwal tim, pilih tanggal, lanjut chat WhatsApp</p>
+            </div>
+        </div>
+
+        <div class="card bg-white rounded-2xl p-4">
+            <div class="flex items-center justify-between mb-3">
+                <button onclick="nav(-1)" aria-label="Bulan sebelumnya"
+                    class="w-10 h-10 rounded-lg border-2 border-slate-900"><i
+                        class="fa-solid fa-chevron-left"></i></button>
+                <h2 id="mt" class="text-xl"></h2>
+                <button onclick="nav(1)" aria-label="Bulan berikutnya"
+                    class="w-10 h-10 rounded-lg border-2 border-slate-900"><i
+                        class="fa-solid fa-chevron-right"></i></button>
+            </div>
+            <div id="wd" class="grid grid-cols-7 gap-1 text-center text-[11px] font-extrabold text-slate-500 mb-1">
+            </div>
+            <div id="g" class="grid grid-cols-7 gap-1"></div>
+            <div class="flex flex-wrap gap-x-4 gap-y-1 mt-3 text-xs font-bold">
+                <span><i class="fa-solid fa-square text-green-300"></i> Tersedia</span>
+                <span><i class="fa-solid fa-square text-blue-500"></i> Terbatas</span>
+                <span><i class="fa-solid fa-square text-red-300"></i> Penuh</span>
+            </div>
+            <p id="err" class="hidden mt-2 text-xs font-bold text-red-600"></p>
+        </div>
+
+        <div id="f" class="card bg-white rounded-2xl p-4 space-y-3 hidden">
+            <h2 class="text-xl">Detail Booking</h2>
+            <p class="text-sm font-extrabold"><i class="fa-regular fa-calendar text-blue-600"></i> <span id="sd"></span>
+            </p>
+            <input id="nm" placeholder="Nama kamu" class="w-full px-3 py-2.5 rounded-lg bg-slate-50 font-semibold">
+            <select id="sv" class="w-full px-3 py-2.5 rounded-lg bg-slate-50 font-semibold">
+                <option>Foto</option>
+                <option>Video</option>
+                <option>Foto + Video</option>
+                <option>Lainnya</option>
+            </select>
+            <input id="lc" placeholder="Lokasi / jenis acara (opsional)"
+                class="w-full px-3 py-2.5 rounded-lg bg-slate-50 font-semibold">
+            <textarea id="nt" rows="2" placeholder="Catatan (opsional)"
+                class="w-full px-3 py-2.5 rounded-lg bg-slate-50 font-semibold resize-none"></textarea>
+            <button onclick="send()"
+                class="btn w-full py-3.5 rounded-xl text-lg flex items-center justify-center gap-2"><i
+                    class="fa-brands fa-whatsapp"></i> Lanjut ke WhatsApp</button>
+            <p class="text-xs font-semibold text-slate-500">Harga &amp; konfirmasi jadwal dibahas langsung lewat
+                WhatsApp.</p>
+        </div>
+    </div>
+
+    <script>
+        const C = typeof CONFIG_APP !== 'undefined' ? CONFIG_APP : {};
+        const WA = String(C.whatsappAdmin || '').replace(/\D/g, '');
+        const BL = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        const HR = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const $ = id => document.getElementById(id), pad = n => String(n).padStart(2, '0');
+        const iso = (y, m, d) => `${y}-${pad(m + 1)}-${pad(d)}`;
+        const t = new Date(), today = iso(t.getFullYear(), t.getMonth(), t.getDate());
+        let y = t.getFullYear(), m = t.getMonth(), days = {}, sel = null, ok = true;
+
+        $('wd').innerHTML = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'].map(x => `<div>${x}</div>`).join('');
+
+        function nav(n) { m += n; if (m < 0) { m = 11; y--; } if (m > 11) { m = 0; y++; } draw(); }
+
+        function draw() {
+            $('mt').textContent = BL[m] + ' ' + y;
+            const first = (new Date(y, m, 1).getDay() + 6) % 7, n = new Date(y, m + 1, 0).getDate();
+            let h = '<div></div>'.repeat(first);
+            for (let d = 1; d <= n; d++) {
+                const k = iso(y, m, d), s = days[k], past = k < today;
+                let c = 'bg-green-100 text-green-800 border-green-300', dis = past;
+                if (past) c = 'bg-slate-100 text-slate-400';
+                else if (s === 'full') { c = 'bg-red-100 text-red-700 border-red-300'; dis = true; }
+                else if (s === 'limited') c = 'bg-blue-200 text-slate-900 border-blue-600';
+                else if (!ok) c = 'bg-slate-50 text-slate-800 border-slate-200';
+                if (k === sel) c += ' ring-4 ring-blue-500';
+                h += `<button ${dis ? 'disabled' : ''} onclick="pick('${k}')" class="d rounded-lg text-sm font-extrabold ${c} ${dis ? 'cursor-not-allowed' : ''}">${d}</button>`;
+            }
+            $('g').innerHTML = h;
+        }
+
+        function pick(k) {
+            sel = k; draw();
+            const [a, b, c] = k.split('-').map(Number), dt = new Date(a, b - 1, c);
+            $('sd').textContent = `${HR[dt.getDay()]}, ${c} ${BL[b - 1]} ${a}` + (days[k] === 'limited' ? ' (jadwal terbatas)' : '');
+            $('f').classList.remove('hidden');
+            $('f').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function send() {
+            const v = id => $(id).value.trim(), nm = v('nm');
+            if (!sel || !nm) return alert('Pilih tanggal dan isi nama dulu ya.');
+            if (!WA) return alert('Nomor WhatsApp admin belum diatur.');
+            const txt = `Halo ${C.namaVendor || 'Gas Baee'}, saya mau booking.\n\nNama: ${nm}\nLayanan: ${v('sv')}\nTanggal: ${$('sd').textContent}\nLokasi/Acara: ${v('lc') || '-'}\nCatatan: ${v('nt') || '-'}\n\nBoleh dibantu info harga & ketersediaannya? Terima kasih!`;
+            window.open(`https://wa.me/${WA}?text=${encodeURIComponent(txt)}`, '_blank');
+        }
+
+        (async () => {
+            try {
+                const r = await fetch('/api/schedule', { cache: 'no-store' });
+                if (!r.ok) throw 0;
+                days = (await r.json()).days || {};
+            } catch (e) {
+                ok = false;
+                $('err').textContent = 'Jadwal belum bisa dimuat. Kamu tetap bisa memilih tanggal, nanti kami konfirmasi lewat WhatsApp.';
+                $('err').classList.remove('hidden');
+            }
+            draw();
+        })();
+    </script>
+</body>
+
+</html>
