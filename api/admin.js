@@ -6,7 +6,8 @@ const { getUser } = require('./_auth');
 const PAGES = {
   '': 'sorter.html',               // /admin
   generator: 'generatorLink.html', // /admin/generator
-  links: 'linkmanager.html'        // /admin/links
+  links: 'linkmanager.html',       // /admin/links
+  jadwal: 'jadwal.html'            // /admin/jadwal
 };
 
 module.exports = (req, res) => {
